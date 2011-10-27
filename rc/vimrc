@@ -1,0 +1,214 @@
+"
+" Matthew's .vimrc file
+"
+
+" With thanks to Tom Mutdosch...
+" http://www.csh.rit.edu/~tommut/tech/vim.html
+" vim kicks some serious arse, kids
+
+version 6.1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Let's get color and syntax highlighting to work, shall we?
+:if has("terminfo")   
+:  set t_Co=16
+:  set t_Sf=[3%p1%dm
+:  set t_Sb=[4%p1%dm
+:else
+:  set t_Co=16                  
+:  set t_Sf=[3%dm
+:  set t_Sb=[4%dm
+:endif 
+set background=dark             " Assume dark background
+
+syntax on                       " Syntax highlighting
+
+" Define custom colors
+hi Comment    ctermfg=LightCyan 
+hi Constant   ctermfg=LightMagenta 
+hi Special    ctermfg=LightRed 
+hi Identifier ctermfg=LightGreen    cterm=bold
+hi Statement  ctermfg=Yellow 
+hi PreProc    ctermfg=LightBlue 
+hi Type       ctermfg=LightGreen
+hi ErrorMsg   ctermfg=White         ctermbg=DarkRed
+hi Search     ctermfg=White         ctermbg=LightRed
+
+
+" Highlight tabs in all files
+" http://www.oclug.on.ca/archives/oclug/2003-June/031895.html
+au BufNewFile,BufReadPost * syntax match Tab /\t/ containedin=ALL
+hi Tab        term=reverse          ctermbg=DarkBlue
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" General Options
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set backspace=indent,eol,start
+
+" Search options
+set hlsearch        " Highlight search (see toggle shortcut)
+set incsearch       " Incremental search
+set ignorecase      " Do case insensitive matching
+set smartcase       " ... unless we enter case
+
+" Display settings
+set showcmd         " Show (partial) command in status line.
+set showmatch       " Show matching brackets.
+set showmode                    
+set ruler           " Show the cursor position all the time
+set laststatus=2    " Always a status line
+
+set shm=oaA         " Abbreviate messages and auto hit RETURN
+
+set autowrite       " Automatically save before commands like :next and :make
+set shell=/bin/bash
+
+set scrolloff=1      " Just one line scroll context
+set wrapmargin=1     " Wrap at the end of the window unless textwidth is set
+set undolevels=1000  " I like to be able to undo everything
+
+" Tab and indentation settings
+set noai                        " auto indent can be evil
+set tabstop=4                   " Set tab stop of 4.
+set expandtab                   " .. and insert spaces
+"set smarttab                   " .. but delete them as a tab
+set shiftwidth=4                " .. and shift the same amount
+
+" Neurotic modes from friends
+ab boggs set ai noet ts=8 sts=4 sw=4
+ab vioff set nocindent noai nosm noet
+ab vion set cindent sm ai et 
+
+" Abbreviations
+ab TM  Tom Mutdosch
+ab MW  Matthew Woitaszek
+
+" Keyboard remappings
+map ' `
+map <space> 
+map - 
+
+" useful for when doing / searches, and you want to temporarily disable case
+map ,I :set noignorecase <CR>
+map ,i :set ignorecase <CR>
+
+" Function key mappings
+map #2 :set nocindent noai nosm noet sw=4 ts=8<CR>
+map #3 :set cindent sm ai et sw=4 ts=4<CR>
+map <F12> :let &hlsearch = !&hlsearch<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Tom's Stuff that I don't mess with
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"this is form cut-and-paste between windows when using visual mouse mode
+vmap ,y :w! ~/.vi_tmp<CR>       
+nmap ,p :r ~/.vi_tmp<CR>
+
+"reformat text when you have wrap margin on and then insert additional text
+map ,H 1G:set tw=999999<CR>gqG:set tw=0<CR>
+map ,r {:set tw=999999<CR>gq}:set tw=0<CR>
+map ,a {/.\{60,}<CR>gq}k
+"map ,a {gq}k
+map ,A ^gq}k
+
+
+"these are useful when using the Kernigan & Richie programming style (I usually
+" do).  These maps will let you traverse up and down all of the function 
+" declarations quickly (it searches for a '{' at the beginning of a line).
+map ,f /^\s*{<CR>
+map ,b ?^\s*{<CR>
+map ,F /^\s*}<CR>
+map ,B ?^\s*}<CR>
+
+map ,l {/{<CR>"ayyy%<CR>k
+map ,L "Ap$px
+
+"some abbreviations useful whenever coding
+"au BufEnter *.h,*.c,*.C,*.cc,*.cpp,*.java ab FOR for ( i =0; i <  ; i++ ) {
+"au BufNewFile *.h,*.c,*.cc,*.C,*.cpp,*.java :r ~/.rcstemplate 
+"au BufEnter *.java ab Sop System.out.println(
+"au BufEnter *.java ab Sep System.err.println(
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Automatic Buffer Expansions
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Whenever we enter a file, set the format options!
+au BufEnter * set formatoptions=tcqn
+
+" Never expand tabs in makefiles
+au BufEnter Makefile,makefile set noexpandtab
+
+" For certain files, turn on cindent and showmatch
+au BufEnter *.h,*.c,*.cc,*.C,*.cpp,*.java set cindent showmatch expandtab smarttab
+au BufEnter *.vilog set ai expandtab 
+au BufEnter *.sh set ai smarttab
+
+augroup Python
+    au!
+    au FileType python set showmatch
+    au FileType python set autoindent expandtab smarttab smartindent "removed smartindent
+    au FileType python set sts=4 sw=4 tw=80 fo=croq
+    au FileType python set cinwords=if,elif,else,for,while,try,except,finally,def,class
+    au FileType python inoremap # X#
+    au FileType python set foldenable
+augroup END
+
+augroup Perl
+    au!
+    au FileType Perl set showmatch
+    au FileType Perl set autoindent smartindent expandtab smarttab
+    au FileType Perl inoremap # X#
+augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Community vimrc extensions
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Transparent editing of gpg encrypted files.
+" By Wouter Hanegraaff <wouter@blub.net>
+augroup encrypted
+    au!
+
+    " First make sure nothing is written to ~/.viminfo while editing
+    " an encrypted file.
+    autocmd BufReadPre,FileReadPre      *.gpg set viminfo=
+    " We don't want a swap file, as it writes unencrypted data to disk
+    autocmd BufReadPre,FileReadPre      *.gpg set noswapfile
+    " Switch to binary mode to read the encrypted file
+    autocmd BufReadPre,FileReadPre      *.gpg set bin
+    autocmd BufReadPre,FileReadPre      *.gpg let ch_save = &ch|set ch=2
+    autocmd BufReadPost,FileReadPost    *.gpg '[,']!gpg --decrypt 2> /dev/null
+    " Switch to normal mode for editing
+    autocmd BufReadPost,FileReadPost    *.gpg set nobin
+    autocmd BufReadPost,FileReadPost    *.gpg let &ch = ch_save|unlet ch_save
+    autocmd BufReadPost,FileReadPost    *.gpg execute ":doautocmd BufReadPost " . expand("%:r")
+
+    " Convert all text to encrypted text before writing
+    autocmd BufWritePre,FileWritePre    *.gpg   '[,']!gpg --default-recipient-self -ae 2>/dev/null
+    " Undo the encryption so we are back in the normal text, directly
+    " after the file has been written.
+    autocmd BufWritePost,FileWritePost    *.gpg   u
+augroup END
+
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+endif " has("autocmd")
+
+
+

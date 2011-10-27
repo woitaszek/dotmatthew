@@ -1,0 +1,7 @@
+# --- Matthew's Global Profile Support ---
+
+source ~/.bashrc.global
+source ~/.bashrc.local
+
+# --- End Global Profile Support ---
+
