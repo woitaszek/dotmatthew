@@ -13,7 +13,7 @@ PROMPT_HOSTCOLOR="\[\033[0;36m\]"
 
 # For certain hosts, override the colors
 hostname_sha=`echo \`hostname\` | shasum | awk '{print $1}'`
-case `hostname_sha` in
+case $hostname_sha in
 
     # primary and secondary servers
     4eb7* )
