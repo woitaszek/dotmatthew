@@ -14,4 +14,5 @@ alias xsmall="xterm -bg MediumPurple4 -fg white -fn 9X15"
 alias xpurple="xterm -bg MediumPurple4 "
 alias xsteel="xterm -bg SteelBlue4 -fg 'misty rose' "
 
+alias ls="ls --color=auto"
 
