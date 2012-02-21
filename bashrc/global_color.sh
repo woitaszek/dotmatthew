@@ -44,6 +44,15 @@ function matthew_prompt
     else
         WARNSTR=""
     fi
+    
+    # Determine if __git_ps1 is available
+    type -t __git_ps1 > /dev/null
+    if [[ "$?" -eq "0" ]]
+    then
+        local GITSTR="\$(__git_ps1 \" \[\033[0;33m\]%s${NOCOLOR}\")"
+    else
+        local GITSTR=""
+    fi
 
     #
     # Prompt construction
@@ -58,7 +67,7 @@ function matthew_prompt
 
     # Create the general prompt, and set the command to choose between a
     # good (return = 0) and bad (return != nonzero) version.
-    PROMPT_CONTENT="${TITLESTR}${TIMESTR}${WARNSTR} ${HISTSTR} [${USERSTR}@${HOSTSTR} ${DIRSTR}]"
+    PROMPT_CONTENT="${TITLESTR}${TIMESTR}${WARNSTR} ${HISTSTR} [${USERSTR}@${HOSTSTR} ${DIRSTR}${GITSTR}]"
     PROMPT_GOOD="${PROMPT_CONTENT}\$ "
     PROMPT_BAD="${PROMPT_CONTENT}\[\033[0;31m\]\$${NOCOLOR} "
     export PROMPT_COMMAND='[ $? = 0 ] && PS1=$PROMPT_GOOD || PS1=$PROMPT_BAD'

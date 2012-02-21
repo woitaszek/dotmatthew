@@ -15,6 +15,12 @@
 # -------------------------------------
 # Prompt Configuration
 # -------------------------------------
+
+if [ -e /usr/local/git/contrib/completion/git-completion.bash ]
+then
+    source /usr/local/git/contrib/completion/git-completion.bash
+fi
+
 PROMPT_HOSTCOLOR="\[\033[0;94m\]"
 matthew_prompt
 
@@ -24,6 +30,7 @@ matthew_prompt
 # -------------------------------------
 
 # Path overrides for packages
+export PATH="/usr/local/Cellar/postgresql/9.1.1/bin:$PATH"
 
 # Path overrides for source packages installed in /opt
 
