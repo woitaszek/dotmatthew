@@ -1,0 +1,32 @@
+
+source ~matthew/.matthew/rc/screenrc-grey
+
+sessionname admin
+
+screen -t ""                0   bash
+
+screen -t "postgres"        1   bash
+stuff                                   "sudo su - postgres"
+
+screen -t "log/django"      2   bash
+stuff                                   "tail -f /var/log/django/django-prod.log"
+
+screen -t "log/celery"      3   bash
+stuff                                   "tail -f /var/log/celery/w1.log"
+
+screen -t "src"             4   bash       
+stuff                                   "cd /usr/local/src"
+
+screen -t "src/prod"        5   bash
+stuff                                   "cd /usr/local/src/prod/occipital"
+
+screen -t "/etc"            6   bash
+stuff                                   "cd /etc"
+
+screen -t ""                7   bash
+
+screen -t ""                8   bash
+
+select 0
+
+
