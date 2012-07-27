@@ -16,3 +16,28 @@ alias xsteel="xterm -bg SteelBlue4 -fg 'misty rose' "
 
 # alias ls="ls --color=auto"
 
+#
+# ack-grep options
+#
+
+export ACK_OPTIONS="--flush --passthru --color"
+
+function djangotail() {
+    tail -n -20 -f $@ | \
+    ack-grep --color-match="green" "celery:" | \
+    ack-grep --color-match="blue" " DEBUG.*" | \
+    ack-grep --color-match="yellow" " WARN.*" | \
+    ack-grep --color-match="red" " ERROR.*" | \
+    ack-grep --color-match="white on_magenta" " CRITICAL.*" | \
+    ack-grep --color-match="white on_red" -i "assert.*| except.*" | \
+    ack-grep --color-match="green" "urlhash=\S+"
+}
+
+function nginxtail() {
+    tail -n -20 -f $@ | \
+    ack-grep --color-match "green"  "(GET|POST|HEAD).* HTTP/1.1\" 2.. " | \
+    ack-grep --color-match "blue"   "(GET|POST|HEAD).* HTTP/1.1\" 3.. " | \
+    ack-grep --color-match="yellow" "(GET|POST|HEAD).* HTTP/1.1\" 4.. " | \
+    ack-grep --color-match="red"    "(GET|POST|HEAD).* HTTP/1.1\" 5.. " 
+}
+
