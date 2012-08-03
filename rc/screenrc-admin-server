@@ -8,24 +8,28 @@ screen -t ""                0   bash
 screen -t "postgres"        1   bash
 stuff                                   "sudo su - postgres"
 
-screen -t "log/django"      2   bash
-stuff                                   "tail -f /var/log/django/django-prod.log"
+screen -t "log/nginx"       2   bash
+stuff                                   "cd /var/log/nginxnginxtail /var/log/nginx/panorama-prod-access.log"
 
-screen -t "log/celery"      3   bash
-stuff                                   "tail -f /var/log/celery/w1.log"
+screen -t "log/django"      3   bash
+stuff                                   "cd /var/log/djangodjangotail /var/log/django/django-prod.log"
 
-screen -t "src"             4   bash       
+screen -t "log/celery"      4   bash
+stuff                                   "cd /var/log/celerydjangotail /var/log/celery/w1.log"
+
+screen -t "log/render"      5   bash
+stuff                                   "cd /var/log/celerydjangotail /var/log/celery/render.log"
+
+screen -t "src"             6   bash       
 stuff                                   "cd /usr/local/src"
 
-screen -t "src/prod"        5   bash
+screen -t "src/prod"        7   bash
 stuff                                   "cd /usr/local/src/prod/occipital"
 
-screen -t "/etc"            6   bash
+screen -t "/etc"            8   bash
 stuff                                   "cd /etc"
 
-screen -t ""                7   bash
-
-screen -t ""                8   bash
+screen -t ""                9   bash
 
 select 0
 
