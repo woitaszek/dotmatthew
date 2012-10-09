@@ -34,7 +34,7 @@ function matthew_prompt
 
     # Set the prompt to red if the user account is not matthew or mattheww
     local PROMPT_USERCOLOR=$NOCOLOR
-        [[ "$USER" != "mattheww" && "$USER" != "matthew" ]] && PROMPT_USERCOLOR="\[\033[1;31m\]"
+        [[ "$USER" != "mwoitas" && "$USER" != "matthew" ]] && PROMPT_USERCOLOR="\[\033[1;31m\]"
 
     # Look at VIFs to determine if this system might be running Xen.
     vif_count=`/sbin/ifconfig 2>/dev/null | grep vif | awk -F. '{print $1}' | sort | uniq  | wc -l`
