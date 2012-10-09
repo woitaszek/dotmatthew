@@ -1,6 +1,6 @@
 shelltitle $HOST
 activity "activity: window ~%"  # Message when activity occurs in a window
-deflogin off                    # Do not register the window in utmp
+#deflogin off                    # Do not register the window in utmp
 
 autodetach on
 
