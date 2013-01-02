@@ -19,5 +19,8 @@ export HISTSIZE=50000
 export HISTFILESIZE=50000
 export HISTIGNORE="rm*:pwd:sudo rm*:&:ls:exit"
 export HISTCONTROL=ignoreboth # ignorespace and ignoredups
+export HISTTIMEFORMAT="%F %T    "
 
+shopt -s histverify
+shopt -s histappend
 
