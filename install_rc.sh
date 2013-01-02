@@ -18,6 +18,10 @@ echo ".screenrc"
 rm -f ~/.screenrc
 ln -s  ~/.matthew/rc/screenrc ~/.screenrc
 
+echo ".gitconfig"
+rm -f ~/.gitconfig
+ln -s ~/.matthew/rc/gitconfig ~/.gitconfig
+
 echo ".bashrc.global"
 rm -f ~/.bashrc.global
 ln -s ~/.matthew/bashrc/global.sh ~/.bashrc.global
