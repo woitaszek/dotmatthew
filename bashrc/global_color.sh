@@ -21,9 +21,9 @@ function matthew_prompt
     #
     # Terminal information for title bars
     #
-    if [[ $TERM == xterm* || $OSTYPE == darwin* ]]
+    if [[ $TERM == xterm* || $OSTYPE == darwin* || $TERM == screen ]]
     then
-        TITLESTR="\[\033]2;\u@\h:\w\a\]"
+        TITLESTR="\[\033]0;\u@\h:\w\007\]"
     else
         TITLESTR=""
     fi
