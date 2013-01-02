@@ -17,6 +17,11 @@ alias xsteel="xterm -bg SteelBlue4 -fg 'misty rose' "
 # alias ls="ls --color=auto"
 
 #
+# git options
+#
+alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short"
+
+#
 # ack-grep options
 #
 
