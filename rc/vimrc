@@ -40,6 +40,8 @@ hi Search     ctermfg=White         ctermbg=LightRed
 au BufNewFile,BufReadPost * syntax match Tab /\t/ containedin=ALL
 hi Tab        term=reverse          ctermbg=DarkBlue
 
+match Error /[\x7f-\xff]/ 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " General Options
 "
@@ -209,6 +211,5 @@ if has("autocmd")
     \   exe "normal g`\"" |
     \ endif
 endif " has("autocmd")
-
 
 
