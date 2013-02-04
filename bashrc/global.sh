@@ -22,8 +22,13 @@ else
     fi
 fi
 
+#
 # Source global components
-source ${THISDIR}/global_color.sh
+#
+
+# Source utils first; those prepare the environment for latter components
+source ${THISDIR}/global_utils.sh
 source ${THISDIR}/global_alias.sh
 source ${THISDIR}/global_shell.sh
+source ${THISDIR}/global_color.sh
 
