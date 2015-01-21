@@ -86,7 +86,7 @@ function matthew_prompt
     PROMPT_CONTENT="${TITLESTR}${TIMESTR} ${HISTSTR}${WARNSTR} [${USERSTR}@${HOSTSTR} ${DIRSTR}${GITSTR}]"
     PROMPT_GOOD="${PROMPT_CONTENT}\$ "
     PROMPT_BAD="${PROMPT_CONTENT}\[\033[0;31m\]\$${NOCOLOR} "
-    export PROMPT_COMMAND='[ $? = 0 ] && PS1=$PROMPT_GOOD || PS1=$PROMPT_BAD'
+    export PROMPT_COMMAND='_RET=$?; history -a; [ $_RET = 0 ] && PS1=$PROMPT_GOOD || PS1=$PROMPT_BAD'
 
 }
 
