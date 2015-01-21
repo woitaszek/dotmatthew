@@ -5,7 +5,8 @@
 #
 
 export VISUAL=vim
-export HISTIZE=20000
+export HISTSIZE=200000
+export HISTFILESIZE=200000
 export GREP_OPTIONS="--color=auto"
 
 # File creation mask
