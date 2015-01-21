@@ -56,7 +56,35 @@ function matthew_prompt
         local WARNSTR=""
     fi
     
-    # Determine if __git_ps1 is available
+    
+    # Add virtual environment if available
+    # To do this, perform a function outcall looking for virtual environment
+    # status; thematically copied from __git_ps1 implementation
+    function __mmvv_virtualenv() {
+        
+        # Get the printf string if present
+        local printf_format='(%s)';
+        case "$#" in
+        0 | 1)
+            printf_format="${1:-$printf_format}"
+            ;;
+        esac
+        
+        # If virtualenv is defined here, emit the name for the prompt.
+        # Add the formatting as defined in the function call and a prefix space
+        if [ ! -z "$VIRTUAL_ENV" ]
+        then
+            vestring=$(basename "${VIRTUAL_ENV}")               # Base name
+            vestring=$(printf -- "$printf_format" "$vestring")  # Add formatting
+            printf -- " %s" "$vestring" # Prefix with unformatted space
+        fi
+    }
+    # No surrounding spaces; they are added by the wrapper above
+    # (we format with an underline, where that matters!)
+    export VENVSTR="\$(__mmvv_virtualenv \"\[\033[04m\]%s${NOCOLOR}\")"
+
+
+    # Add __git_ps1 if available
     type -t __git_ps1 > /dev/null
     if [[ "$?" -eq "0" ]]
     then
@@ -83,7 +111,7 @@ function matthew_prompt
 
     # Create the general prompt, and set the command to choose between a
     # good (return = 0) and bad (return != nonzero) version.
-    PROMPT_CONTENT="${TITLESTR}${TIMESTR} ${HISTSTR}${WARNSTR} [${USERSTR}@${HOSTSTR} ${DIRSTR}${GITSTR}]"
+    PROMPT_CONTENT="${TITLESTR}${TIMESTR} ${HISTSTR}${WARNSTR} [${USERSTR}@${HOSTSTR} ${DIRSTR}${VENVSTR}${GITSTR}]"
     PROMPT_GOOD="${PROMPT_CONTENT}\$ "
     PROMPT_BAD="${PROMPT_CONTENT}\[\033[0;31m\]\$${NOCOLOR} "
     export PROMPT_COMMAND='_RET=$?; history -a; [ $_RET = 0 ] && PS1=$PROMPT_GOOD || PS1=$PROMPT_BAD'
