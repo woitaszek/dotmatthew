@@ -5,8 +5,6 @@
 #
 
 export VISUAL=vim
-export HISTSIZE=200000
-export HISTFILESIZE=200000
 export GREP_OPTIONS="--color=auto"
 
 # File creation mask
@@ -16,8 +14,8 @@ umask ug+rwx
 shopt -s extglob
 
 # History control
-export HISTSIZE=50000
-export HISTFILESIZE=50000
+export HISTSIZE=200000
+export HISTFILESIZE=200000
 export HISTIGNORE="rm*:pwd:sudo rm*:&:ls:exit"
 export HISTCONTROL=ignoreboth # ignorespace and ignoredups
 export HISTTIMEFORMAT="%F %T    "
