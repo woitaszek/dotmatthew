@@ -26,7 +26,7 @@ alias gitgraph="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%
 # ack-grep options
 #
 
-export ACK_OPTIONS="--flush --passthru --color"
+export ACK_OPTIONS="--flush --color"
 
 function djangotail() {
     tail -n -20 -f $@ | \
