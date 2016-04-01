@@ -34,7 +34,7 @@ export PATH="/usr/local/Cellar/postgresql/9.1.1/bin:$PATH"
 # -------------------------------------
 
 # Unison
-export UNISONLOCALHOSTNAME=sanbruno
+export UNISONLOCALHOSTNAME=sanbruno.local
 
 # Mac: use ls with colors
 export CLICOLOR="True"
