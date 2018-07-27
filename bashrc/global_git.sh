@@ -1,5 +1,5 @@
 #
-# Matthew's global profile for utility configuration
+# Matthew's global profile for git configuration
 #
 # October 2012
 #
@@ -7,6 +7,12 @@
 # -------------------------------------
 # Git
 # -------------------------------------
+
+#
+# This tree contains every method I've ever seen to source git support for
+# bash shells. We use __git_ps1 in the prompt construction, so it needs to
+# be made available first.
+#
 
 # Source new-style git prompt preparation
 if [ -e /usr/share/git-core/contrib/completion/git-prompt.sh ]
@@ -38,9 +44,4 @@ then
     # CentOS, Fedora, RHEL systems
     source /etc/bash_completion.d/git
 fi
-
-
-# -------------------------------------
-# Everything Else
-# -------------------------------------
 

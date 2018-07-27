@@ -26,9 +26,11 @@ fi
 # Source global components
 #
 
-# Source utils first; those prepare the environment for latter components
-source ${THISDIR}/global_utils.sh
+# Source git support to get __git_ps1, and then prepare the prompt control function
+source ${THISDIR}/global_git.sh
+source ${THISDIR}/global_prompt.sh
+
+# Source everything else
 source ${THISDIR}/global_alias.sh
 source ${THISDIR}/global_shell.sh
-source ${THISDIR}/global_color.sh
 
