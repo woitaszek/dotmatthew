@@ -19,18 +19,8 @@
 PROMPT_HOSTCOLOR="\[\033[0;94m\]"
 matthew_prompt
 
-
 # -------------------------------------
-# Path Configuration
-# -------------------------------------
-
-# Path overrides for packages
-export PATH="/usr/local/Cellar/postgresql/9.1.1/bin:$PATH"
-
-# Path overrides for source packages installed in /opt
-
-# -------------------------------------
-# Application Configuration
+# Utility Configuration
 # -------------------------------------
 
 # Unison
@@ -45,8 +35,12 @@ export CLICOLOR="True"
 # GNU privacy guard... should be set out-of-repository
 #export GNUPGHOME=""
 
+
 # -------------------------------------
 # Everything Else
 # -------------------------------------
 
+# Setting PATH for Python 3.6
+# The original version is saved in .profile.pysave
+export PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
 
