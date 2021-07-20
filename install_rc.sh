@@ -18,22 +18,22 @@ echo ".screenrc"
 rm -f ~/.screenrc
 ln -s  ~/.matthew/rc/screenrc ~/.screenrc
 
-echo ".gitconfig"
-rm -f ~/.gitconfig
-ln -s ~/.matthew/rc/gitconfig ~/.gitconfig
+#echo ".gitconfig"
+#rm -f ~/.gitconfig
+#ln -s ~/.matthew/rc/gitconfig ~/.gitconfig
 
-echo ".bashrc.global"
-rm -f ~/.bashrc.global
-ln -s ~/.matthew/bashrc/global.sh ~/.bashrc.global
+#echo ".bashrc.global"
+#rm -f ~/.bashrc.global
+#ln -s ~/.matthew/bashrc/global.sh ~/.bashrc.global
 
-echo ".bashrc"
-rm -f ~/.bashrc
-ln -s ~/.matthew/bashrc/bashrc ~/.bashrc
+#echo ".bashrc"
+#rm -f ~/.bashrc
+#ln -s ~/.matthew/bashrc/bashrc ~/.bashrc
 
-echo ".bashrc.local:"
-echo "Remember to create a link to the proper file manually:"
-echo "  $ rm -f ~/.bashrc.local"
-echo "  $ ln -s ~/.matthew/bashrc/local_SYSTEM.sh .bashrc.local"
-echo
+#echo ".bashrc.local:"
+#echo "Remember to create a link to the proper file manually:"
+#echo "  $ rm -f ~/.bashrc.local"
+#echo "  $ ln -s ~/.matthew/bashrc/local_SYSTEM.sh .bashrc.local"
+#echo
 
 
