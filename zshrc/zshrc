@@ -1,0 +1,37 @@
+
+# Aliases
+alias ls='ls -G'
+alias ll='ls -lG'
+
+# History
+SAVEHIST=10000
+HISTSIZE=5000
+setopt EXTENDED_HISTORY         # save timestamp and command elapsed time
+setopt SHARE_HISTORY            # share history across multiple zsh sessions
+setopt APPEND_HISTORY           # append to history instead of overwriting
+setopt HIST_VERIFY              # require editing/verifying after !!
+
+# Git prompt
+autoload -Uz vcs_info
+precmd_vcs_info() { vcs_info }
+precmd_functions+=( precmd_vcs_info )
+setopt prompt_subst
+zstyle ':vcs_info:git:*' formats ' %b'
+
+# Prompt
+# The default is PS1="%n@%m %1~ %# "
+NEWPROMPT="%n@%m"                                           # default:   username@host
+NEWPROMPT="${NEWPROMPT} %F{12}%1~%f"                        # blue:      pwd
+NEWPROMPT="${NEWPROMPT}%F{14}\$vcs_info_msg_0_%f"           # cyan:      branch (may be empty)
+NEWPROMPT="${NEWPROMPT} %F{8}%!%f"                          # grey:      histnum
+NEWPROMPT="${NEWPROMPT} %(?.%F{green}%#.%F{red}%#)%f "      # green/red: $ or %
+PS1=${NEWPROMPT}
+
+# Tab completions
+# https://stackoverflow.com/questions/8300687/zsh-color-partial-tab-completions
+zstyle ':completion:*' menu select
+zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*==34=35}:${(s.:.)LS_COLORS}")'
+
+# Google Cloud SDK path and shell completion
+if [ -f '/opt/google-cloud-sdk/path.zsh.inc' ]; then . '/opt/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/opt/google-cloud-sdk/completion.zsh.inc' ]; then . '/opt/google-cloud-sdk/completion.zsh.inc'; fi
