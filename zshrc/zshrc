@@ -11,26 +11,60 @@ setopt SHARE_HISTORY            # share history across multiple zsh sessions
 setopt APPEND_HISTORY           # append to history instead of overwriting
 setopt HIST_VERIFY              # require editing/verifying after !!
 
-# Git prompt
+# Shell options
+setopt ignore_eof               # Do not close window with Ctrl-D
+
+
+# ----------------------------------------
+# Prompt
+# ----------------------------------------
+
+# Enable prompt substitution
+setopt prompt_subst
+autoload -Uz add-zsh-hook
+
+# Git prompt component: $vcs_info_msg_0_
 autoload -Uz vcs_info
 precmd_vcs_info() { vcs_info }
-precmd_functions+=( precmd_vcs_info )
-setopt prompt_subst
+add-zsh-hook precmd precmd_vcs_info
+
 zstyle ':vcs_info:git:*' formats ' %b'
+
+# Virtualenv prompt component: $prompt_virtualenv
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+function precmd_virtualenv_info() {
+    if [[ -z $VIRTUAL_ENV ]] then
+        prompt_virtualenv=''
+    else
+        prompt_virtualenv=" ${VIRTUAL_ENV##*/}"
+    fi
+}
+add-zsh-hook precmd precmd_virtualenv_info
 
 # Prompt
 # The default is PS1="%n@%m %1~ %# "
 NEWPROMPT="%n@%m"                                           # default:   username@host
 NEWPROMPT="${NEWPROMPT} %F{12}%1~%f"                        # blue:      pwd
 NEWPROMPT="${NEWPROMPT}%F{14}\$vcs_info_msg_0_%f"           # cyan:      branch (may be empty)
+NEWPROMPT="${NEWPROMPT}%F{11}\$prompt_virtualenv%f"         # yellow:    virtualenv (may be empty)
 NEWPROMPT="${NEWPROMPT} %F{8}%!%f"                          # grey:      histnum
 NEWPROMPT="${NEWPROMPT} %(?.%F{green}%#.%F{red}%#)%f "      # green/red: $ or %
 PS1=${NEWPROMPT}
+
+
+# ----------------------------------------
+# Additional zsh configuration
+# ----------------------------------------
 
 # Tab completions
 # https://stackoverflow.com/questions/8300687/zsh-color-partial-tab-completions
 zstyle ':completion:*' menu select
 zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*==34=35}:${(s.:.)LS_COLORS}")'
+
+
+# ----------------------------------------
+# Optional software
+# ----------------------------------------
 
 # Google Cloud SDK path and shell completion
 if [ -f '/opt/google-cloud-sdk/path.zsh.inc' ]; then . '/opt/google-cloud-sdk/path.zsh.inc'; fi
