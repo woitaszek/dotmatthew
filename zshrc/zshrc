@@ -1,3 +1,9 @@
+# .zshrc
+# Matthew's zsh settings
+
+# ----------------------------------------
+# Basics
+# ----------------------------------------
 
 # Aliases
 alias ls='ls -G'
@@ -71,6 +77,27 @@ zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:
 # Optional software
 # ----------------------------------------
 
+# Visual Studio Code CLI
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
 # Google Cloud SDK path and shell completion
 if [ -f '/opt/google-cloud-sdk/path.zsh.inc' ]; then . '/opt/google-cloud-sdk/path.zsh.inc'; fi
 if [ -f '/opt/google-cloud-sdk/completion.zsh.inc' ]; then . '/opt/google-cloud-sdk/completion.zsh.inc'; fi
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Java
+export JAVA_HOME="`/usr/libexec/java_home -v 1.8`"
+
+
+# ----------------------------------------
+# Local customizations
+# ----------------------------------------
+
+if [ -e ~/.zshrc.local ]; then
+    source ~/.zshrc.local
+fi
+
