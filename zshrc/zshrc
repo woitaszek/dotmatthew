@@ -3,16 +3,19 @@
 alias ls='ls -G'
 alias ll='ls -lG'
 
+# Shell options
+setopt ignore_eof               # Do not close window with Ctrl-D
+
 # History
 SAVEHIST=10000
 HISTSIZE=5000
 setopt EXTENDED_HISTORY         # save timestamp and command elapsed time
 setopt SHARE_HISTORY            # share history across multiple zsh sessions
 setopt APPEND_HISTORY           # append to history instead of overwriting
+unsetopt INC_APPEND_HISTORY     # ... but when sessions are closed, not after every line
 setopt HIST_VERIFY              # require editing/verifying after !!
-
-# Shell options
-setopt ignore_eof               # Do not close window with Ctrl-D
+hgrep () { fc -Dlim "*$@*" 1 }
+# ... consider using fzf instead
 
 
 # ----------------------------------------
@@ -27,8 +30,7 @@ autoload -Uz add-zsh-hook
 autoload -Uz vcs_info
 precmd_vcs_info() { vcs_info }
 add-zsh-hook precmd precmd_vcs_info
-
-zstyle ':vcs_info:git:*' formats ' %b'
+zstyle ':vcs_info:git:*' formats ' %b'                      # space in front if populated
 
 # Virtualenv prompt component: $prompt_virtualenv
 export VIRTUAL_ENV_DISABLE_PROMPT=1
@@ -36,12 +38,12 @@ function precmd_virtualenv_info() {
     if [[ -z $VIRTUAL_ENV ]] then
         prompt_virtualenv=''
     else
-        prompt_virtualenv=" ${VIRTUAL_ENV##*/}"
+        prompt_virtualenv=" ${VIRTUAL_ENV##*/}"             # space in front if populated
     fi
 }
 add-zsh-hook precmd precmd_virtualenv_info
 
-# Prompt
+# Build the prompt
 # The default is PS1="%n@%m %1~ %# "
 NEWPROMPT="%n@%m"                                           # default:   username@host
 NEWPROMPT="${NEWPROMPT} %F{12}%1~%f"                        # blue:      pwd
@@ -56,9 +58,12 @@ PS1=${NEWPROMPT}
 # Additional zsh configuration
 # ----------------------------------------
 
-# Tab completions
+# Tab highlights and completions
 # https://stackoverflow.com/questions/8300687/zsh-color-partial-tab-completions
+# ... Show the interactive menu, available if you press Tab:
 zstyle ':completion:*' menu select
+# ... Show matched letters in blue and the next active selection letter in magenta
+#     but handwave away the consistency details with LS_COLORS for now
 zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*==34=35}:${(s.:.)LS_COLORS}")'
 
 
