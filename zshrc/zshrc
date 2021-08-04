@@ -13,13 +13,17 @@ alias ll='ls -lG'
 setopt ignore_eof               # Do not close window with Ctrl-D
 
 # History
-SAVEHIST=10000
-HISTSIZE=5000
+SAVEHIST=20000
+HISTSIZE=10000
+
 setopt EXTENDED_HISTORY         # save timestamp and command elapsed time
-setopt SHARE_HISTORY            # share history across multiple zsh sessions
 setopt APPEND_HISTORY           # append to history instead of overwriting
-unsetopt INC_APPEND_HISTORY     # ... but when sessions are closed, not after every line
+unsetopt INC_APPEND_HISTORY     # ... but when sessions are closed, not after each command
+unsetopt SHARE_HISTORY          # (turned off) read history whenever used
+
 setopt HIST_VERIFY              # require editing/verifying after !!
+setopt HIST_FIND_NO_DUPS        # ignore duplicates in history search
+setopt HIST_IGNORE_DUPS         # don't save consecutive duplicates
 hgrep () { fc -Dlim "*$@*" 1 }
 # ... consider using fzf instead
 
