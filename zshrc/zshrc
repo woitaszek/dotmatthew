@@ -113,6 +113,8 @@ export NVM_DIR="$HOME/.nvm"
 # Java
 export JAVA_HOME="`/usr/libexec/java_home -v 1.8`"
 
+# Git
+alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short"
 
 # ----------------------------------------
 # Local customizations
