@@ -70,6 +70,12 @@ function precmd_virtualenv_info() {
 }
 add-zsh-hook precmd precmd_virtualenv_info
 
+# Title bar prompt component
+function precmd_window_title() {
+    echo -ne "\e]1;$USER@$(hostname) $PWD\a"
+}
+add-zsh-hook precmd precmd_window_title
+
 # Build the prompt
 # The default is PS1="%n@%m %1~ %# "
 NEWPROMPT="%n@%m"                                           # default:   username@host
