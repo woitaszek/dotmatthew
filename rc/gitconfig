@@ -9,3 +9,5 @@
 [user]
 	name = Matthew Woitaszek
 	email = matthew.woitaszek@gmail.com
+[init]
+	defaultBranch = main
