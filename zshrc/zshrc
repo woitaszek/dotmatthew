@@ -117,7 +117,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Java
-export JAVA_HOME="`/usr/libexec/java_home -v 1.8`"
+if [ -f /usr/libexec/java_home ]; then
+    export JAVA_HOME="`/usr/libexec/java_home -v 1.8`" 2>/dev/null
+fi
 
 # Git
 alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short"
