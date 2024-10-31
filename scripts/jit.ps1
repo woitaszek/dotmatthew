@@ -35,6 +35,7 @@ if (-not $resourceGroupName -or -not $vmName -or -not $sourceAddresses) {
 }
 
 # Calculate end time for JIT access
+# $endTimeUts = Get-Date (Get-Date -AsUTC).AddHours(3) -Format O
 $endTimeUtc = (Get-Date).AddHours(3).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
 
@@ -50,7 +51,10 @@ Write-Output "  ResourceGroupName: $resourceGroupName"
 Write-Output "  ID: $($vm.Id)"
 Write-Output "  Name: $($vm.Name)"
 Write-Output "  Location: $($vm.Location)"
-Write-Output "  SourceAddresses: $($sourceAddresses)"
+Write-Output "  SourceAddresses: $sourceAddresses"
+foreach ($sourceAddress in $sourceAddresses) {
+    Write-Output "  * $sourceAddress"
+}
 Write-Output "  EndTimeUtc: $endTimeUtc"
 
 # Define JIT policy
@@ -100,39 +104,59 @@ Write-Output "JIT access configured for VM: $vmName in Resource Group: $resource
 # Activate JIT access for the VM
 #
 
-# Define JIT request
-$jitRequest = (@{
-    id = $vm.Id
-    ports = @(
-        @{
-            number = 22
-            allowedSourceAddressPrefix = $sourceAddresses
-            endTimeUtc = $endTimeUtc
-        },
-        @{
-            number = 3389
-            allowedSourceAddressPrefix = $sourceAddresses
-            endTimeUtc = $endTimeUtc
-        },
-        @{
-            number = 60000
-            allowedSourceAddressPrefix = $sourceAddresses
-            endTimeUtc = $endTimeUtc
-        },
-        @{
-            number = 60001
-            allowedSourceAddressPrefix = $sourceAddresses
-            endTimeUtc = $endTimeUtc
-        },
-        @{
-            number = 60002
-            allowedSourceAddressPrefix = $sourceAddresses
-            endTimeUtc = $endTimeUtc
-        }
-    )
-})
-$jitRequestArr = @($jitRequest)
+# Note that allowedSourceAddressPrefix seems like it could expect an array
+# from the samples but in practice it doesn't work that way.
+#
+# Microsoft.Azure.Commands.Security.Models.JitNetworkAccessPolicies.PSSecurityJitNetworkAccessPolicyInitiatePort
+# The settable properties are:
+#   [AllowedSourceAddressPrefix <System.String>],
+#   [EndTimeUtc <System.DateTime>],
+#   [Number <System.Int32>].
+#
+# * allowedSourceAddressPrefix = @("x.x.x.x","x.x.x.x")
+#   Fails with:  provided must be a valid IPv4 Address Prefix.
+# * allowedSourceAddressPrefix = @("x.x.x.x/32","x.x.x.x/32")
+#   Doesn't fail but does nothing.
+#
+# So, we'll make a JIT request for each sourceAddress.
 
-# Start the JIT access
-Start-AzJitNetworkAccessPolicy -ResourceGroupName $resourceGroupName -Location $vm.Location -Name "default" -VirtualMachine $jitRequestArr
+foreach ($sourceAddress in $sourceAddresses) {
+    Write-Output "Activating JIT access for SourceAddress: $sourceAddress"
+
+    $jitRequest = (@{
+        id = $vm.Id
+        ports = @(
+            @{
+                number = 22
+                endTimeUtc = $endTimeUtc
+                allowedSourceAddressPrefix = $sourceAddress
+            },
+            @{
+                number = 3389
+                allowedSourceAddressPrefix = $sourceAddress
+                endTimeUtc = $endTimeUtc
+            },
+            @{
+                number = 60000
+                allowedSourceAddressPrefix = $sourceAddress
+                endTimeUtc = $endTimeUtc
+            },
+            @{
+                number = 60001
+                allowedSourceAddressPrefix = $sourceAddress
+                endTimeUtc = $endTimeUtc
+            },
+            @{
+                number = 60002
+                allowedSourceAddressPrefix = $sourceAddress
+                endTimeUtc = $endTimeUtc
+            }
+        )
+    })
+
+    $jitRequestArr = @($jitRequest)
+    Start-AzJitNetworkAccessPolicy -ResourceGroupName $resourceGroupName -Location $vm.Location -Name "default" -VirtualMachine $jitRequestArr
+
+}
+
 Write-Output "JIT access activated for VM: $vmName in Resource Group: $resourceGroupName"
