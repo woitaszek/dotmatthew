@@ -38,6 +38,11 @@ if (-not $resourceGroupName -or -not $vmName -or -not $sourceAddresses) {
 # $endTimeUts = Get-Date (Get-Date -AsUTC).AddHours(3) -Format O
 $endTimeUtc = (Get-Date).AddHours(3).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
+# Deduplicate source addresses, printing any that were duplicates
+$sourceAddresses | Group-Object | Where-Object { $_.Count -gt 1 } | ForEach-Object {
+    Write-Output "Duplicate source address: $($_.Name)"
+}
+$sourceAddresses = $sourceAddresses | Sort-Object -Unique
 
 #
 # Configure a JIT policy for the VM
