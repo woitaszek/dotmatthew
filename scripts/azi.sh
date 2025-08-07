@@ -30,6 +30,56 @@ readonly ICON_ERROR="❌"
 readonly ICON_WARNING="⚠️"
 readonly ICON_AZURE="☁️"
 
+# Function to check token validity and expiration
+check_token_status() {
+    local -n status_ref=$1
+    local -n expires_ref=$2
+    local -n needs_refresh_ref=$3
+
+    status_ref="Unknown"
+    expires_ref=""
+    needs_refresh_ref=false
+
+    # Get token information from az account get-access-token
+    local token_info
+    if token_info=$(az account get-access-token --query "{expiresOn: expiresOn}" --output json 2>/dev/null); then
+        expires_ref=$(echo "$token_info" | jq -r '.expiresOn // "Unknown"' 2>/dev/null)
+
+        if [[ "$expires_ref" != "Unknown" && "$expires_ref" != "null" ]]; then
+            # Convert expiration time to epoch seconds
+            local expires_epoch
+            if expires_epoch=$(date -d "$expires_ref" +%s 2>/dev/null); then
+                local current_epoch
+                current_epoch=$(date +%s)
+                local time_remaining=$((expires_epoch - current_epoch))
+
+                if [[ $time_remaining -gt 3600 ]]; then
+                    # More than 1 hour remaining
+                    status_ref="${GREEN}Valid${NC}"
+                elif [[ $time_remaining -gt 300 ]]; then
+                    # Between 5 minutes and 1 hour remaining
+                    status_ref="${YELLOW}Expires Soon${NC}"
+                elif [[ $time_remaining -gt 0 ]]; then
+                    # Less than 5 minutes remaining
+                    status_ref="${YELLOW}Expires Very Soon${NC}"
+                    needs_refresh_ref=true
+                else
+                    # Token has expired
+                    status_ref="${RED}Expired${NC}"
+                    needs_refresh_ref=true
+                fi
+            else
+                status_ref="${YELLOW}Parse Error${NC}"
+            fi
+        else
+            status_ref="${YELLOW}Unknown Expiry${NC}"
+        fi
+    else
+        status_ref="${RED}Token Check Failed${NC}"
+        needs_refresh_ref=true
+    fi
+}
+
 # Function to display Azure information
 azi() {
     local mode="verbose"  # Default to verbose mode
@@ -107,6 +157,10 @@ azi() {
     local sub_count
     sub_count=$(az account list --query "length(@)" --output tsv 2>/dev/null || echo "?")
 
+    # Check token expiration and validity
+    local token_status token_expires needs_refresh
+    check_token_status token_status token_expires needs_refresh
+
     # Display the information based on the selected mode
     if [[ "$mode" == "short" ]]; then
         # Short mode: existing one-line output
@@ -115,7 +169,13 @@ azi() {
         echo -n -e "${ICON_TENANT} ${PURPLE}${tenant_name}${NC} ${GRAY}|${NC} "
         echo -n -e "${ICON_SUBSCRIPTION} ${CYAN}${subscription_name}${NC} "
         echo -n -e "${DARK_GRAY}${subscription_id}${NC} "
-        echo -e "${GRAY}(${sub_count} total)${NC}"
+        echo -n -e "${GRAY}(${sub_count} total)${NC} "
+        echo -n -e "${GRAY}| Token:${NC} ${token_status}"
+        if [[ -n "$token_expires" && "$token_expires" != "Unknown" ]]; then
+            echo -e " ${DARK_GRAY}(expires: $(date -d "$token_expires" "+%H:%M" 2>/dev/null || echo "$token_expires"))${NC}"
+        else
+            echo ""
+        fi
     else
         # Verbose mode: multi-line output with white labels
         echo -e "${ICON_AZURE} ${BLUE}Azure Status${NC}"
@@ -124,6 +184,17 @@ azi() {
         echo -e "${ICON_SUBSCRIPTION} ${WHITE}Subscription Name:${NC}  ${CYAN}${subscription_name}${NC}"
         echo -e "${ICON_ID} ${WHITE}Subscription ID:${NC}    ${DARK_GRAY}${subscription_id}${NC}"
         echo -e "${ICON_COUNT} ${WHITE}Total Subs:${NC}         ${GRAY}${sub_count}${NC}"
+        echo -n -e "${ICON_CHECK} ${WHITE}Token Status:${NC}       ${token_status}"
+        if [[ -n "$token_expires" && "$token_expires" != "Unknown" ]]; then
+            echo -e " ${DARK_GRAY}(expires: $(date -d "$token_expires" "+%Y-%m-%d %H:%M" 2>/dev/null || echo "$token_expires"))${NC}"
+        else
+            echo ""
+        fi
+
+        # Show refresh warning if needed
+        if [[ "$needs_refresh" == true ]]; then
+            echo -e "${ICON_WARNING} ${YELLOW}Consider running 'az login' to refresh your authentication${NC}"
+        fi
     fi
 }
 
