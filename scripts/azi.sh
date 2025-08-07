@@ -23,6 +23,8 @@ readonly NC='\033[0m' # No Color
 readonly ICON_USER="👤"
 readonly ICON_TENANT="🏢"
 readonly ICON_SUBSCRIPTION="💳"
+readonly ICON_ID="🔑"
+readonly ICON_COUNT="📊"
 readonly ICON_CHECK="✅"
 readonly ICON_ERROR="❌"
 readonly ICON_WARNING="⚠️"
@@ -30,6 +32,37 @@ readonly ICON_AZURE="☁️"
 
 # Function to display Azure information
 azi() {
+    local mode="verbose"  # Default to verbose mode
+
+    # Parse command line arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -s|--short)
+                mode="short"
+                shift
+                ;;
+            -v|--verbose)
+                mode="verbose"
+                shift
+                ;;
+            -h|--help)
+                echo "Usage: azi [OPTIONS]"
+                echo "Display Azure CLI status information"
+                echo ""
+                echo "Options:"
+                echo "  -s, --short     Display information in compact one-line format"
+                echo "  -v, --verbose   Display information in multi-line format (default)"
+                echo "  -h, --help      Show this help message"
+                return 0
+                ;;
+            *)
+                echo -e "${ICON_ERROR} ${RED}Unknown option: $1${NC}"
+                echo "Use --help for usage information"
+                return 1
+                ;;
+        esac
+    done
+
     # Check if Azure CLI is installed
     if ! command -v az &> /dev/null; then
         echo -e "${ICON_ERROR} ${RED}Azure CLI is not installed or not in PATH${NC}"
@@ -74,16 +107,27 @@ azi() {
     local sub_count
     sub_count=$(az account list --query "length(@)" --output tsv 2>/dev/null || echo "?")
 
-    # Display the colorful status line components
-    echo -n -e "${ICON_AZURE} ${BOLD}${BLUE} Azure:${NC} "
-    echo -n -e "${ICON_USER} ${GREEN}${user_name}${NC} ${GRAY}|${NC} "
-    echo -n -e "${ICON_TENANT} ${PURPLE}${tenant_name}${NC} ${GRAY}|${NC} "
-    echo -n -e "${ICON_SUBSCRIPTION} ${CYAN}${subscription_name}${NC} "
-    echo -n -e "${DARK_GRAY}${subscription_id}${NC} "
-    echo -e "${GRAY}(${sub_count} total)${NC}"
+    # Display the information based on the selected mode
+    if [[ "$mode" == "short" ]]; then
+        # Short mode: existing one-line output
+        echo -n -e "${ICON_AZURE} ${BOLD}${BLUE} Azure:${NC} "
+        echo -n -e "${ICON_USER} ${GREEN}${user_name}${NC} ${GRAY}|${NC} "
+        echo -n -e "${ICON_TENANT} ${PURPLE}${tenant_name}${NC} ${GRAY}|${NC} "
+        echo -n -e "${ICON_SUBSCRIPTION} ${CYAN}${subscription_name}${NC} "
+        echo -n -e "${DARK_GRAY}${subscription_id}${NC} "
+        echo -e "${GRAY}(${sub_count} total)${NC}"
+    else
+        # Verbose mode: multi-line output with white labels
+        echo -e "${ICON_AZURE} ${BLUE}Azure Status${NC}"
+        echo -e "${ICON_USER} ${WHITE}User:${NC}               ${GREEN}${user_name}${NC}"
+        echo -e "${ICON_TENANT} ${WHITE}Tenant:${NC}             ${PURPLE}${tenant_name}${NC}"
+        echo -e "${ICON_SUBSCRIPTION} ${WHITE}Subscription Name:${NC}  ${CYAN}${subscription_name}${NC}"
+        echo -e "${ICON_ID} ${WHITE}Subscription ID:${NC}    ${DARK_GRAY}${subscription_id}${NC}"
+        echo -e "${ICON_COUNT} ${WHITE}Total Subs:${NC}         ${GRAY}${sub_count}${NC}"
+    fi
 }
 
 # If script is run directly (not sourced), execute the function
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    azi
+    azi "$@"
 fi
