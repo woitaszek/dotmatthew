@@ -43,3 +43,9 @@ if [ -d "$HOME/.pyenv" ]; then
     [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init - bash)"
 fi
+
+# Add scripts directory to PATH if not already present
+SCRIPTS_DIR="$HOME/.matthew/scripts"
+if [[ ":$PATH:" != *":$SCRIPTS_DIR:"* ]]; then
+    export PATH="$SCRIPTS_DIR:$PATH"
+fi
