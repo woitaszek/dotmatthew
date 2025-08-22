@@ -3,6 +3,7 @@
 # Azure CLI Status Display Script
 #
 # Print the current Azure login context with colorful icons and formatting.
+# Shows dynamic status updates during slow operations.
 #
 # Usage: ./azi.sh or source this script to use the aza() function
 
@@ -29,6 +30,32 @@ readonly ICON_CHECK="✅"
 readonly ICON_ERROR="❌"
 readonly ICON_WARNING="⚠️"
 readonly ICON_AZURE="☁️"
+readonly ICON_LOADING="⏳"
+
+# Function to show progress message
+# Usage: show_progress "Loading data..."
+show_progress() {
+    local msg="$1"
+    # Clear the line and print the message
+    printf "\r%-80s" " " # Clear the line
+    printf "\r${ICON_LOADING} ${BLUE}%s${NC}" "$msg"
+}
+
+# Function to update the progress message
+# Usage: update_progress "New status message"
+update_progress() {
+    local msg="$1"
+    # Clear the line and print the new message
+    printf "\r%-80s" " " # Clear the line
+    printf "\r${ICON_LOADING} ${BLUE}%s${NC}" "$msg"
+}
+
+# Function to clear the progress message
+# Usage: clear_progress
+clear_progress() {
+    # Clear the progress line
+    printf "\r%-80s\r" " "
+}
 
 # Function to check token validity and expiration
 check_token_status() {
@@ -125,15 +152,22 @@ azi() {
         return 1
     fi
 
+    # Show initial progress message
+    show_progress "Checking Azure login status..."
+
     # Check if user is logged in
     if ! az account show &> /dev/null; then
+        clear_progress
         echo -e "${ICON_WARNING} ${YELLOW}Not logged into Azure. Run 'az login' to authenticate.${NC}"
         return 1
     fi
 
+    update_progress "Retrieving Azure account information..."
+
     # Get account information
     local account_info
     if ! account_info=$(az account show --output json); then
+        clear_progress
         echo -e "${ICON_ERROR} ${RED}Failed to retrieve Azure account information${NC}"
         return 1
     fi
@@ -145,11 +179,15 @@ azi() {
     subscription_name=$(echo "$account_info" | jq -r '.name // "Unknown"' 2>/dev/null)
     subscription_id=$(echo "$account_info" | jq -r '.id // "Unknown"' 2>/dev/null)
 
+    update_progress "Retrieving user principal information..."
+
     # Get userPrincipalName from Graph API
     local user_principal_name
     if ! user_principal_name=$(az ad signed-in-user show --query "userPrincipalName" -o tsv 2>/dev/null); then
         user_principal_name="Unknown"
     fi
+
+    update_progress "Retrieving tenant information..."
 
     # Call the Graph API to get the tenant default domain name
     local tenant_data
@@ -159,13 +197,20 @@ azi() {
     local tenant_name
     tenant_name=$(echo "$tenant_data" | jq -r '.defaultDomainName // "Unknown"' 2>/dev/null)
 
+    update_progress "Counting available subscriptions..."
+
     # Get available subscription count for additional context
     local sub_count
     sub_count=$(az account list --query "length(@)" --output tsv 2>/dev/null || echo "?")
 
+    update_progress "Checking token expiration..."
+
     # Check token expiration and validity
     local token_status token_expires needs_refresh
     check_token_status token_status token_expires needs_refresh
+
+    # Clear the progress message now that all data is collected
+    clear_progress
 
     # Display the information based on the selected mode
     if [[ "$mode" == "short" ]]; then
@@ -204,6 +249,15 @@ azi() {
         fi
     fi
 }
+
+# Cleanup function for traps
+cleanup() {
+    clear_progress 2>/dev/null
+    exit 1
+}
+
+# Set trap for proper cleanup on interruptions
+trap cleanup INT TERM
 
 # If script is run directly (not sourced), execute the function
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
