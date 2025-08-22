@@ -145,6 +145,12 @@ azi() {
     subscription_name=$(echo "$account_info" | jq -r '.name // "Unknown"' 2>/dev/null)
     subscription_id=$(echo "$account_info" | jq -r '.id // "Unknown"' 2>/dev/null)
 
+    # Get userPrincipalName from Graph API
+    local user_principal_name
+    if ! user_principal_name=$(az ad signed-in-user show --query "userPrincipalName" -o tsv 2>/dev/null); then
+        user_principal_name="Unknown"
+    fi
+
     # Call the Graph API to get the tenant default domain name
     local tenant_data
     if ! tenant_data=$(az rest --method get --url "https://graph.microsoft.com/v1.0/tenantRelationships/microsoft.graph.findTenantInformationByTenantId(tenantId='$tenant_id')"); then
@@ -165,7 +171,7 @@ azi() {
     if [[ "$mode" == "short" ]]; then
         # Short mode: existing one-line output
         echo -n -e "${ICON_AZURE} ${BOLD}${BLUE} Azure:${NC} "
-        echo -n -e "${ICON_USER} ${GREEN}${user_name}${NC} ${GRAY}|${NC} "
+        echo -n -e "${ICON_USER} ${GREEN}${user_name}${NC} ${DARK_GRAY}(${user_principal_name})${NC} ${GRAY}|${NC} "
         echo -n -e "${ICON_TENANT} ${PURPLE}${tenant_name}${NC} ${GRAY}|${NC} "
         echo -n -e "${ICON_SUBSCRIPTION} ${CYAN}${subscription_name}${NC} "
         echo -n -e "${DARK_GRAY}${subscription_id}${NC} "
@@ -178,8 +184,9 @@ azi() {
         fi
     else
         # Verbose mode: multi-line output with white labels
-        echo -e "${ICON_AZURE} ${BLUE}Azure Status${NC}"
+        echo -e "${ICON_AZURE} ${BLUE} Azure Status${NC}"
         echo -e "${ICON_USER} ${WHITE}User:${NC}               ${GREEN}${user_name}${NC}"
+        echo -e "${ICON_USER} ${WHITE}User Principal:${NC}     ${DARK_GRAY}${user_principal_name}${NC}"
         echo -e "${ICON_TENANT} ${WHITE}Tenant:${NC}             ${PURPLE}${tenant_name}${NC}"
         echo -e "${ICON_SUBSCRIPTION} ${WHITE}Subscription Name:${NC}  ${CYAN}${subscription_name}${NC}"
         echo -e "${ICON_ID} ${WHITE}Subscription ID:${NC}    ${DARK_GRAY}${subscription_id}${NC}"
