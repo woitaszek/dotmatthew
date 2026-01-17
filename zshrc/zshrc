@@ -134,3 +134,6 @@ if [ -e ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
 
+if [ -e "$HOME/.local/bin/env" ]; then
+    . "$HOME/.local/bin/env"
+fi
