@@ -50,6 +50,10 @@ winget install --id Docker.DockerDesktop -e --source winget --accept-package-agr
 Write-Host "Installing Azure Developer CLI..." -ForegroundColor Yellow
 winget install --id Microsoft.Azd -e --source winget --accept-package-agreements --accept-source-agreements
 
+# GitHub Copilot CLI
+Write-Host "Installing GitHub Copilot CLI..." -ForegroundColor Yellow
+winget install --id GitHub.Copilot -e --source winget --accept-package-agreements --accept-source-agreements
+
 # ── Security ────────────────────────────────────────────────────────────────
 
 # 1Password (Microsoft Store: AgileBits.1Password)
