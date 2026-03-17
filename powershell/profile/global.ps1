@@ -13,6 +13,8 @@ $matthewDir = "$HOME\.matthew\powershell"
 $ompTheme = "$matthewDir\themes\mytheme-azure.omp.json"
 if (Test-Path $ompTheme) {
     oh-my-posh init pwsh --config $ompTheme | Invoke-Expression
+} else {
+    Write-Host "WARNING: Oh My Posh theme not found at $ompTheme" -ForegroundColor Yellow
 }
 
 #

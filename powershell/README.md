@@ -6,9 +6,11 @@ PowerShell profile, scripts, and Oh My Posh theme configuration for Windows and 
 
 ```text
 powershell/
-├── bootstrap-windows.ps1 # Phase 1: Windows prereq installer (winget)
-├── bootstrap-mac.sh      # Phase 1: macOS prereq installer (Homebrew)
-├── install.ps1           # Phase 2: configure PowerShell profile (cross-platform)
+├── install-1-bootstrap.ps1 # Phase 1: Windows prereq installer (winget)
+├── install-1-bootstrap.sh   # Phase 1: macOS prereq installer (Homebrew)
+├── install-2-profile.ps1    # Phase 2: configure PowerShell profile (cross-platform)
+├── install-3-apps.ps1       # Phase 3: app installs via winget
+├── install-4-system.ps1     # Phase 4: system config requiring Admin (WSL, Defender)
 ├── profile/
 │   ├── global.ps1       # Shared profile: OMP prompt, aliases, PATH
 │   └── local_*.ps1      # Per-machine overrides (optional)
@@ -26,15 +28,15 @@ On a new Windows machine with no tools installed, open PowerShell **as Administr
 then either download and inspect first:
 
 ```powershell
-irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/bootstrap-windows.ps1 -OutFile bootstrap-windows.ps1
-cat bootstrap-windows.ps1   # review the script
-.\bootstrap-windows.ps1    # run it
+irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.ps1 -OutFile install-1-bootstrap.ps1
+cat install-1-bootstrap.ps1   # review the script
+.\install-1-bootstrap.ps1    # run it
 ```
 
 Or run directly (if you trust the source):
 
 ```powershell
-iex (irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/bootstrap-windows.ps1)
+iex (irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.ps1)
 ```
 
 This installs:
@@ -51,7 +53,7 @@ Then clones this repo to `~/.matthew`.
 After the repo is cloned, run:
 
 ```powershell
-& "$HOME\.matthew\powershell\install.ps1"
+& "$HOME\.matthew\powershell\install-2-profile.ps1"
 ```
 
 This writes a shim to `$PROFILE` that dot-sources `profile/global.ps1`. The shim
@@ -63,6 +65,35 @@ Restart PowerShell or reload:
 ```powershell
 . $PROFILE
 ```
+
+### Phase 3: Install Apps
+
+Install common development tools and productivity apps via winget (no admin required):
+
+```powershell
+& "$HOME\.matthew\powershell\install-3-apps.ps1"
+```
+
+This installs:
+
+- **Development**: GitHub CLI, VS Code Insiders, Python 3, PowerShell Preview, Docker Desktop, Azure Developer CLI
+- **Security**: 1Password, 1Password CLI
+- **Productivity**: PowerToys, Pandoc
+
+The Work section (VS 2022 Enterprise) is commented out by default. Uncomment if needed.
+
+### Phase 4: System Config (Admin)
+
+Open PowerShell **as Administrator**, then run:
+
+```powershell
+& "$HOME\.matthew\powershell\install-4-system.ps1"
+```
+
+This configures:
+
+- Windows Subsystem for Linux (WSL)
+- Defender exclusions for dev folders (`~/dev`, `~/.venvs`, `\\wsl$`, Docker)
 
 ### Configure Windows Terminal Font
 
@@ -78,15 +109,15 @@ Set your terminal font to **CascadiaCode Nerd Font** (required for prompt glyphs
 Download and inspect first:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/bootstrap-mac.sh -o bootstrap-mac.sh
-cat bootstrap-mac.sh        # review the script
-bash bootstrap-mac.sh       # run it
+curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh -o install-1-bootstrap.sh
+cat install-1-bootstrap.sh        # review the script
+bash install-1-bootstrap.sh       # run it
 ```
 
 Or run directly (if you trust the source):
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/bootstrap-mac.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh)
 ```
 
 This installs:
@@ -103,7 +134,7 @@ Then clones this repo to `~/.matthew`.
 Run the same cross-platform install script:
 
 ```powershell
-& (Join-Path $HOME ".matthew" "powershell" "install.ps1")
+& (Join-Path $HOME ".matthew" "powershell" "install-2-profile.ps1")
 ```
 
 ### Configure macOS Terminal Font

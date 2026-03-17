@@ -10,12 +10,12 @@
 # Usage:
 #
 #   Option 1 - Download, inspect, then run:
-#     curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/bootstrap-mac.sh -o bootstrap-mac.sh
-#     cat bootstrap-mac.sh        # review the script
-#     bash bootstrap-mac.sh       # run it
+#     curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh -o install-1-bootstrap.sh
+#     cat install-1-bootstrap.sh        # review the script
+#     bash install-1-bootstrap.sh       # run it
 #
 #   Option 2 - Run directly (if you trust the source):
-#     bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/bootstrap-mac.sh)
+#     bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh)
 #
 
 set -euo pipefail
@@ -73,9 +73,12 @@ echo ""
 echo "=== Bootstrap complete ==="
 echo ""
 echo "Next steps:"
-echo "  1. Run the PowerShell install script to configure your PS profile:"
-echo "     & \"\$HOME/.matthew/powershell/install.ps1\""
-echo "  2. Or run the bash install script for shell dotfiles:"
+echo "  1. Configure terminal font: 'MesloLGS Nerd Font'"
+echo "  2. Configure PowerShell profile:"
+echo "     & \"\$HOME/.matthew/powershell/install-2-profile.ps1\""
+echo "  3. Install apps (Windows only):"
+echo "     & \"\$HOME/.matthew/powershell/install-3-apps.ps1\""
+echo "  4. Or run the bash install script for shell dotfiles:"
 echo "     ~/.matthew/install_rc.sh"
 echo ""
 echo "Configure your terminal font to 'MesloLGS Nerd Font'"
