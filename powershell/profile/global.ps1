@@ -10,7 +10,14 @@ $matthewDir = "$HOME\.matthew\powershell"
 #
 # Oh My Posh prompt
 #
-$ompTheme = "$matthewDir\themes\mytheme-azure.omp.json"
+# Prevent Python venv activate.ps1 from prepending (.venv) to the prompt;
+# Oh My Posh handles venv display natively via the python segment.
+# Note: mytheme-v3 intentionally keeps some segment settings under `properties`.
+# Switching those to `options` removes schema warnings, but breaks git/status
+# rendering in the current Oh My Posh runtime we validated locally.
+$env:VIRTUAL_ENV_DISABLE_PROMPT = 1
+
+$ompTheme = "$matthewDir\themes\mytheme-v3.omp.json"
 if (Test-Path $ompTheme) {
     oh-my-posh init pwsh --config $ompTheme | Invoke-Expression
 } else {

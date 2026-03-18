@@ -1,0 +1,99 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": false,
+      "segments": [
+        {
+          "type": "session",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b4",
+          "foreground": "#ffffff",
+          "background": "#BF616A",
+          "template": "{{ if .Root }}\uf0e7{{ end }}"
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#cccccc",
+          "template": "{{ if .Root }} {{ end }}{{ .UserName }}@{{ .HostName }} "
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#81A1C1",
+          "template": "{{ base .Location }} "
+        },
+        {
+          "type": "git",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b4",
+          "foreground": "#e8ecf0",
+          "background": "#23262e",
+          "template": "{{ if not (env \"VIRTUAL_ENV\") }} <#b9c0c8>{{ .HEAD }}</>{{ if gt .Ahead 0 }} <#9f7aea>\u2191{{ .Ahead }}</>{{ end }}{{ if gt .Behind 0 }} <#5f87d7>\u2193{{ .Behind }}</>{{ end }}{{ if .Working.Changed }} <#ffcb6b>\uf044 {{ .Working.String }}</>{{ end }}{{ if and (or (gt .Ahead 0) (gt .Behind 0) (.Working.Changed)) (or (.Staging.Changed) (gt .StashCount 0)) }} <#6b7280>|</>{{ end }}{{ if .Staging.Changed }} <#7ee787>\uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Staging.Changed) (gt .StashCount 0) }} <#6b7280>|</>{{ end }}{{ if gt .StashCount 0 }} <#61afef>\ueb4b {{ .StashCount }}</>{{ end }} {{ end }}",
+          "properties": {
+            "branch_max_length": 25,
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          }
+        },
+        {
+          "type": "git",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "foreground": "#e8ecf0",
+          "background": "#23262e",
+          "template": "{{ if env \"VIRTUAL_ENV\" }} <#b9c0c8>{{ .HEAD }}</>{{ if gt .Ahead 0 }} <#9f7aea>\u2191{{ .Ahead }}</>{{ end }}{{ if gt .Behind 0 }} <#5f87d7>\u2193{{ .Behind }}</>{{ end }}{{ if .Working.Changed }} <#ffcb6b>\uf044 {{ .Working.String }}</>{{ end }}{{ if and (or (gt .Ahead 0) (gt .Behind 0) (.Working.Changed)) (or (.Staging.Changed) (gt .StashCount 0)) }} <#6b7280>|</>{{ end }}{{ if .Staging.Changed }} <#7ee787>\uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Staging.Changed) (gt .StashCount 0) }} <#6b7280>|</>{{ end }}{{ if gt .StashCount 0 }} <#61afef>\ueb4b {{ .StashCount }}</>{{ end }} {{ end }}",
+          "properties": {
+            "branch_max_length": 25,
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          }
+        },
+        {
+          "type": "python",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "foreground": "#e8ffff",
+          "background": "#2d3238",
+          "template": " {{ if .Error }}{{ .Error }}{{ else if env \"VIRTUAL_ENV\" }}{{ base (env \"VIRTUAL_ENV\") }}{{ else if .Venv }}{{ .Venv }}{{ else }}{{ .Full }}{{ end }} ",
+          "options": {
+            "display_mode": "context",
+            "fetch_virtual_env": true,
+            "folder_name_fallback": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#4d4d4d",
+          "template": "{{ .CurrentDate | date \"15:04\" }} "
+        },
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ff0000{{ end }}"],
+          "template": "\u276f ",
+          "properties": {
+            "always_enabled": true
+          }
+        }
+      ]
+    }
+  ],
+  "version": 3
+}
