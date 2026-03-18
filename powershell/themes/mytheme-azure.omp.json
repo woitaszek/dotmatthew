@@ -66,7 +66,7 @@
       "type": "prompt",
       "alignment": "right",
       "newline": false,
-      "force": true,
+      "overflow": "hide",
       "segments": [
         {
           "type": "az",
@@ -74,7 +74,7 @@
           "leading_diamond": "",
           "foreground": "#000000",
           "background": "#d0def0",
-          "template": "☁️ {{ .Name }} ",
+          "template": "☁ {{ .Name }} ",
           "options": {
             "source": "pwsh"
           }
