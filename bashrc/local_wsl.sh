@@ -55,3 +55,6 @@ UV_DIR="$HOME/.local/bin"
 if [[ ":$PATH:" != *":$UV_DIR:"* ]]; then
     export PATH="$UV_DIR:$PATH"
 fi
+
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
