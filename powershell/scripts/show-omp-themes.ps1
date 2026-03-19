@@ -84,7 +84,7 @@ function Get-ResolvedThemeRoots {
     }
 
     if ($AddWorkspaceThemes) {
-        $roots.Add((Join-Path $PSScriptRoot "..\themes"))
+        $roots.Add((Join-Path $PSScriptRoot ".." "themes"))
     }
 
     $resolvedRoots = [System.Collections.Generic.List[string]]::new()

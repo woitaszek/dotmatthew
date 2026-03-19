@@ -68,6 +68,8 @@ Write-Host ""
 Write-Host "Install complete. Restart PowerShell or run:" -ForegroundColor Cyan
 Write-Host "  . `$PROFILE" -ForegroundColor White
 Write-Host ""
-Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "  Install apps:        & `"$matthewDir\powershell\install\install-3-apps.ps1`"" -ForegroundColor White
-Write-Host "  System config (Admin): & `"$matthewDir\powershell\install\install-4-system.ps1`"" -ForegroundColor White
+Write-Host "Next steps (Windows only):" -ForegroundColor Cyan
+$install3 = Join-Path $matthewDir "powershell" "install" "install-3-apps.ps1"
+$install4 = Join-Path $matthewDir "powershell" "install" "install-4-system.ps1"
+Write-Host "  Install apps:        & `"$install3`"" -ForegroundColor White
+Write-Host "  System config (Admin): & `"$install4`"" -ForegroundColor White

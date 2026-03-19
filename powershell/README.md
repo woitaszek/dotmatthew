@@ -10,15 +10,19 @@ powershell/
 │   ├── install-1-bootstrap.ps1  # Phase 1: Windows prereq installer (winget)
 │   ├── install-1-bootstrap.sh   # Phase 1: macOS prereq installer (Homebrew)
 │   ├── install-2-profile.ps1    # Phase 2: configure PowerShell profile (cross-platform)
-│   ├── install-3-apps.ps1       # Phase 3: app installs via winget
+│   ├── install-3-apps.ps1       # Phase 3: app installs via winget (Windows only)
 │   └── install-4-system.ps1     # Phase 4: system config requiring Admin (WSL, Defender)
 ├── profile/
 │   ├── global.ps1       # Shared profile: OMP prompt, aliases, PATH
 │   └── local_*.ps1      # Per-machine overrides (optional)
 ├── scripts/
-│   └── jit.ps1          # Azure VM Just-In-Time access provisioning
+│   ├── demo-omp-prompt-legend.ps1  # Prompt glyph legend helper
+│   ├── jit.ps1                     # Azure VM Just-In-Time access
+│   └── show-omp-themes.ps1         # Oh My Posh theme previewer
 └── themes/
-    └── mytheme-azure.omp.json # Oh My Posh theme (with Azure segments)
+    ├── mytheme-v1.omp.json
+    ├── mytheme-v2.omp.json
+    └── mytheme-v3.omp.json  # Current active theme
 ```
 
 ## Windows Setup (Two-Phase Install)
@@ -67,7 +71,7 @@ Restart PowerShell or reload:
 . $PROFILE
 ```
 
-### Phase 3: Install Apps
+### Phase 3: Install Apps (Windows Only)
 
 Install common development tools and productivity apps via winget (no admin required):
 
