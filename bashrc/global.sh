@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 #
 # Matthew's global bash profile
 #
@@ -11,9 +12,9 @@
 # Get the directory that this script is installed in. It's tricky, because $0
 # is often "-bash", and we might be called via a symlink. If we can't get it,
 # guess the usual installation location.
-if [[ -n "$BASH_SOURCE" ]]
+if [[ -n "${BASH_SOURCE[0]}" ]]
 then
-    THISDIR=`dirname $(readlink $BASH_SOURCE)`
+    THISDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 else
     eval THISDIR="~/.matthew/bashrc" # expand path
     if [ ! -e "$THISDIR" ]
@@ -27,10 +28,10 @@ fi
 #
 
 # Source git support to get __git_ps1, and then prepare the prompt control function
-source ${THISDIR}/global_git.sh
-source ${THISDIR}/global_prompt.sh
+source "${THISDIR}/global_git.sh"
+source "${THISDIR}/global_prompt.sh"
 
 # Source everything else
-source ${THISDIR}/global_alias.sh
-source ${THISDIR}/global_shell.sh
+source "${THISDIR}/global_alias.sh"
+source "${THISDIR}/global_shell.sh"
 

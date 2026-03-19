@@ -7,33 +7,30 @@ accumulated over the years.
 
 ```text
 .matthew/
-├── bashrc/          # Bash profile (modular: global + per-machine local_*.sh)
-├── rc/              # Unix dotfiles (gitconfig, vimrc, inputrc, screenrc)
+├── bashrc/          # Bash profile, installer, and per-machine local_*.sh files
+├── rc/              # Unix dotfiles (vimrc, inputrc, screenrc)
 ├── zshrc/           # Zsh configuration
 ├── Library/         # macOS KeyBindings
 ├── scripts/         # Bash/Python utility scripts
-├── powershell/      # PowerShell profile, scripts, and Oh My Posh theme
-└── install_rc.sh    # Bash/Unix dotfile installer (symlinks rc/ files)
+└── powershell/      # PowerShell profile, scripts, and Oh My Posh theme
 ```
 
-## Installation
+## Bash/Unix
 
-### Bash/Unix
+Modular bash profile with shared globals and per-machine overrides.
+See [bashrc/README.md](bashrc/README.md) for installation and architecture.
 
-Clone the repo and run the symlink installer:
+## PowerShell (Windows & macOS)
 
-```bash
-git clone https://github.com/woitaszek/dotmatthew.git ~/.matthew
-~/.matthew/install_rc.sh
-```
+PowerShell profile, scripts, and Oh My Posh theme for Windows and macOS.
+See [powershell/README.md](powershell/README.md) for the multi-phase setup.
 
-Then symlink the appropriate local profile for your machine:
+## Zsh
 
-```bash
-ln -s ~/.matthew/bashrc/local_SYSTEMNAME.sh ~/.bashrc.local
-```
+Standalone zsh configuration with a custom prompt and tab-completion styling.
+See [zshrc/README.md](zshrc/README.md) for installation.
 
-### PowerShell (Windows & macOS)
+## macOS KeyBindings
 
-See [powershell/README.md](powershell/README.md) for the two-phase setup:
-bootstrap a fresh Windows PC, then configure your PowerShell profile.
+Remaps Home/End keys for line and document navigation on macOS.
+See [Library/README.md](Library/README.md) for installation.
