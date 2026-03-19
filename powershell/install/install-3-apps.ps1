@@ -14,7 +14,7 @@
 # is convenient for GUI apps. Use `winget search <name>` to find either format.
 #
 # Usage:
-#   & (Join-Path $HOME ".matthew" "powershell" "install-3-apps.ps1")
+#   & (Join-Path $HOME ".matthew" "powershell" "install" "install-3-apps.ps1")
 #
 
 Write-Host "=== dotmatthew App Install ===" -ForegroundColor Cyan
@@ -89,4 +89,4 @@ Write-Host ""
 Write-Host "=== App Install complete ===" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next step (run as Admin):" -ForegroundColor Cyan
-Write-Host "  & `"$(Join-Path $HOME '.matthew' 'powershell' 'install-4-system.ps1')`"" -ForegroundColor White
+Write-Host "  & `"$(Join-Path $HOME '.matthew' 'powershell' 'install' 'install-4-system.ps1')`"" -ForegroundColor White

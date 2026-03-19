@@ -9,12 +9,12 @@
 # Usage (open PowerShell as Administrator, then pick one):
 #
 #   Option 1 - Download, inspect, then run:
-#     irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.ps1 -OutFile install-1-bootstrap.ps1
+#     irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.ps1 -OutFile install-1-bootstrap.ps1
 #     cat install-1-bootstrap.ps1   # review the script
 #     .\install-1-bootstrap.ps1    # run it
 #
 #   Option 2 - Run directly (if you trust the source):
-#     iex (irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.ps1)
+#     iex (irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.ps1)
 #
 
 #Requires -RunAsAdministrator
@@ -61,8 +61,8 @@ Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "  1. Configure Windows Terminal font: 'CascadiaCode Nerd Font'" -ForegroundColor White
 Write-Host "  2. Configure PowerShell profile:" -ForegroundColor White
-Write-Host "       & `"$matthewDir\powershell\install-2-profile.ps1`"" -ForegroundColor White
+Write-Host "       & `"$matthewDir\powershell\install\install-2-profile.ps1`"" -ForegroundColor White
 Write-Host "  3. Install apps:" -ForegroundColor White
-Write-Host "       & `"$matthewDir\powershell\install-3-apps.ps1`"" -ForegroundColor White
+Write-Host "       & `"$matthewDir\powershell\install\install-3-apps.ps1`"" -ForegroundColor White
 Write-Host "  4. System config (run as Admin):" -ForegroundColor White
-Write-Host "       & `"$matthewDir\powershell\install-4-system.ps1`"" -ForegroundColor White
+Write-Host "       & `"$matthewDir\powershell\install\install-4-system.ps1`"" -ForegroundColor White

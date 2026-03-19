@@ -5,7 +5,7 @@
 # PowerShell profile. Parallels install_rc.sh for bash.
 #
 # Usage:
-#   & (Join-Path $HOME ".matthew" "powershell" "install-2-profile.ps1")
+#   & (Join-Path $HOME ".matthew" "powershell" "install" "install-2-profile.ps1")
 #
 
 $matthewDir = Join-Path $HOME ".matthew"
@@ -69,5 +69,5 @@ Write-Host "Install complete. Restart PowerShell or run:" -ForegroundColor Cyan
 Write-Host "  . `$PROFILE" -ForegroundColor White
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "  Install apps:        & `"$matthewDir\powershell\install-3-apps.ps1`"" -ForegroundColor White
-Write-Host "  System config (Admin): & `"$matthewDir\powershell\install-4-system.ps1`"" -ForegroundColor White
+Write-Host "  Install apps:        & `"$matthewDir\powershell\install\install-3-apps.ps1`"" -ForegroundColor White
+Write-Host "  System config (Admin): & `"$matthewDir\powershell\install\install-4-system.ps1`"" -ForegroundColor White

@@ -6,11 +6,12 @@ PowerShell profile, scripts, and Oh My Posh theme configuration for Windows and 
 
 ```text
 powershell/
-├── install-1-bootstrap.ps1 # Phase 1: Windows prereq installer (winget)
-├── install-1-bootstrap.sh   # Phase 1: macOS prereq installer (Homebrew)
-├── install-2-profile.ps1    # Phase 2: configure PowerShell profile (cross-platform)
-├── install-3-apps.ps1       # Phase 3: app installs via winget
-├── install-4-system.ps1     # Phase 4: system config requiring Admin (WSL, Defender)
+├── install/
+│   ├── install-1-bootstrap.ps1  # Phase 1: Windows prereq installer (winget)
+│   ├── install-1-bootstrap.sh   # Phase 1: macOS prereq installer (Homebrew)
+│   ├── install-2-profile.ps1    # Phase 2: configure PowerShell profile (cross-platform)
+│   ├── install-3-apps.ps1       # Phase 3: app installs via winget
+│   └── install-4-system.ps1     # Phase 4: system config requiring Admin (WSL, Defender)
 ├── profile/
 │   ├── global.ps1       # Shared profile: OMP prompt, aliases, PATH
 │   └── local_*.ps1      # Per-machine overrides (optional)
@@ -28,7 +29,7 @@ On a new Windows machine with no tools installed, open PowerShell **as Administr
 then either download and inspect first:
 
 ```powershell
-irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.ps1 -OutFile install-1-bootstrap.ps1
+irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.ps1 -OutFile install-1-bootstrap.ps1
 cat install-1-bootstrap.ps1   # review the script
 .\install-1-bootstrap.ps1    # run it
 ```
@@ -36,7 +37,7 @@ cat install-1-bootstrap.ps1   # review the script
 Or run directly (if you trust the source):
 
 ```powershell
-iex (irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.ps1)
+iex (irm https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.ps1)
 ```
 
 This installs:
@@ -53,7 +54,7 @@ Then clones this repo to `~/.matthew`.
 After the repo is cloned, run:
 
 ```powershell
-& "$HOME\.matthew\powershell\install-2-profile.ps1"
+& "$HOME\.matthew\powershell\install\install-2-profile.ps1"
 ```
 
 This writes a shim to `$PROFILE` that dot-sources `profile/global.ps1`. The shim
@@ -71,7 +72,7 @@ Restart PowerShell or reload:
 Install common development tools and productivity apps via winget (no admin required):
 
 ```powershell
-& "$HOME\.matthew\powershell\install-3-apps.ps1"
+& "$HOME\.matthew\powershell\install\install-3-apps.ps1"
 ```
 
 This installs:
@@ -87,7 +88,7 @@ The Work section (VS 2022 Enterprise) is commented out by default. Uncomment if 
 Open PowerShell **as Administrator**, then run:
 
 ```powershell
-& "$HOME\.matthew\powershell\install-4-system.ps1"
+& "$HOME\.matthew\powershell\install\install-4-system.ps1"
 ```
 
 This configures:
@@ -109,7 +110,7 @@ Set your terminal font to **CascadiaCode Nerd Font** (required for prompt glyphs
 Download and inspect first:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh -o install-1-bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.sh -o install-1-bootstrap.sh
 cat install-1-bootstrap.sh        # review the script
 bash install-1-bootstrap.sh       # run it
 ```
@@ -117,7 +118,7 @@ bash install-1-bootstrap.sh       # run it
 Or run directly (if you trust the source):
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.sh)
 ```
 
 This installs:
@@ -125,6 +126,7 @@ This installs:
 - Xcode Command Line Tools (includes Git)
 - Homebrew (if not present)
 - Oh My Posh
+- PowerShell
 - MesloLGS Nerd Font
 
 Then clones this repo to `~/.matthew`.
@@ -134,7 +136,7 @@ Then clones this repo to `~/.matthew`.
 Run the same cross-platform install script:
 
 ```powershell
-& (Join-Path $HOME ".matthew" "powershell" "install-2-profile.ps1")
+& (Join-Path $HOME ".matthew" "powershell" "install" "install-2-profile.ps1")
 ```
 
 ### Configure macOS Terminal Font

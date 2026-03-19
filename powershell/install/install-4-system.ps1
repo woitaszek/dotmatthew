@@ -7,7 +7,7 @@
 # Inspired by Chris's setup scripts.
 #
 # Usage (open PowerShell as Administrator):
-#   & (Join-Path $HOME ".matthew" "powershell" "install-4-system.ps1")
+#   & (Join-Path $HOME ".matthew" "powershell" "install" "install-4-system.ps1")
 #
 
 #Requires -RunAsAdministrator

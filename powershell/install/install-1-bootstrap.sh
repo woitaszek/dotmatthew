@@ -6,16 +6,18 @@
 # dotmatthew repository.
 #
 # This script is self-contained and does not depend on the repo being present.
+# It's written in bash so it can be used to install the prerequisites before the
+# PowerShell-based profile and app installation scripts can run.
 #
 # Usage:
 #
 #   Option 1 - Download, inspect, then run:
-#     curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh -o install-1-bootstrap.sh
+#     curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.sh -o install-1-bootstrap.sh
 #     cat install-1-bootstrap.sh        # review the script
 #     bash install-1-bootstrap.sh       # run it
 #
 #   Option 2 - Run directly (if you trust the source):
-#     bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install-1-bootstrap.sh)
+#     bash <(curl -fsSL https://raw.githubusercontent.com/woitaszek/dotmatthew/main/powershell/install/install-1-bootstrap.sh)
 #
 
 set -euo pipefail
@@ -51,6 +53,10 @@ fi
 echo "Installing Oh My Posh..."
 brew install jandedobbeleer/oh-my-posh/oh-my-posh
 
+# Install PowerShell
+echo "Installing PowerShell..."
+brew install powershell
+
 # Install MesloLGS Nerd Font (required for prompt glyphs)
 echo "Installing MesloLGS Nerd Font..."
 brew install --cask font-meslo-lg-nerd-font
@@ -75,9 +81,9 @@ echo ""
 echo "Next steps:"
 echo "  1. Configure terminal font: 'MesloLGS Nerd Font'"
 echo "  2. Configure PowerShell profile:"
-echo "     & \"\$HOME/.matthew/powershell/install-2-profile.ps1\""
+echo "     & \"\$HOME/.matthew/powershell/install/install-2-profile.ps1\""
 echo "  3. Install apps (Windows only):"
-echo "     & \"\$HOME/.matthew/powershell/install-3-apps.ps1\""
+echo "     & \"\$HOME/.matthew/powershell/install/install-3-apps.ps1\""
 echo "  4. Or run the bash install script for shell dotfiles:"
 echo "     ~/.matthew/install_rc.sh"
 echo ""
