@@ -5,7 +5,7 @@
 # and contains shared configuration across all Windows machines.
 #
 
-$matthewDir = "$HOME\.matthew\powershell"
+$matthewDir = Join-Path $HOME ".matthew" "powershell"
 
 #
 # Oh My Posh prompt
@@ -17,7 +17,7 @@ $matthewDir = "$HOME\.matthew\powershell"
 # rendering in the current Oh My Posh runtime we validated locally.
 $env:VIRTUAL_ENV_DISABLE_PROMPT = 1
 
-$ompTheme = "$matthewDir\themes\mytheme-v3.omp.json"
+$ompTheme = Join-Path $matthewDir "themes" "mytheme-v3.omp.json"
 if (Test-Path $ompTheme) {
     oh-my-posh init pwsh --config $ompTheme | Invoke-Expression
 } else {
@@ -35,16 +35,18 @@ function gitgraph { git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgr
 #
 # Add powershell/scripts to PATH
 #
-$psScripts = "$matthewDir\scripts"
-if (($env:Path -split ';') -notcontains $psScripts) {
-    $env:Path += ";$psScripts"
+$psScripts = Join-Path $matthewDir "scripts"
+$pathSep = [IO.Path]::PathSeparator
+if (($env:PATH -split [regex]::Escape($pathSep)) -notcontains $psScripts) {
+    $env:PATH += "$pathSep$psScripts"
 }
 
 #
 # Local per-machine overrides
 # Create powershell/profile/local_MACHINENAME.ps1 for machine-specific config
 #
-$localProfile = "$matthewDir\profile\local_$($env:COMPUTERNAME.ToLower()).ps1"
+$machineName = if ($env:COMPUTERNAME) { $env:COMPUTERNAME.ToLower() } else { (hostname).Trim().ToLower() }
+$localProfile = Join-Path $matthewDir "profile" "local_$machineName.ps1"
 if (Test-Path $localProfile) {
     . $localProfile
 }
