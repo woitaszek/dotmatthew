@@ -49,3 +49,9 @@ SCRIPTS_DIR="$HOME/.matthew/scripts"
 if [[ ":$PATH:" != *":$SCRIPTS_DIR:"* ]]; then
     export PATH="$SCRIPTS_DIR:$PATH"
 fi
+
+# Add UV directory to PATH if not already present
+UV_DIR="$HOME/.local/bin"
+if [[ ":$PATH:" != *":$UV_DIR:"* ]]; then
+    export PATH="$UV_DIR:$PATH"
+fi
