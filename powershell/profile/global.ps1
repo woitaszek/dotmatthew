@@ -25,6 +25,20 @@ if (Test-Path $ompTheme) {
 }
 
 #
+# PSReadLine - better tab completion and history
+#
+# Tab opens an interactive menu of all completions (vs. cycling one at a time)
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+# Load CompletionPredictor plugin if installed (Install-Module CompletionPredictor)
+if (Get-Module -ListAvailable -Name CompletionPredictor) {
+    Import-Module CompletionPredictor
+}
+# Draw suggestions from history and any installed predictor plugins
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin
+# Show the top suggestion as inline ghost text (press RightArrow to accept)
+Set-PSReadLineOption -PredictionViewStyle InlineView
+
+#
 # Aliases
 #
 Set-Alias -Name which -Value Get-Command

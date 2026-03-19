@@ -41,5 +41,20 @@ wsl --install
 #     Add-MpPreference -ExclusionPath $path
 # }
 
+# ── PowerShell Modules ──────────────────────────────────────────────────────
+
+# We install these as AllUsers so they don't clutter up the profile
+# that roams via OneDrive because some files trigger Defender alerts
+
+# CompletionPredictor - feeds tab-completion results into PSReadLine inline suggestions
+Write-Host "Installing CompletionPredictor..." -ForegroundColor Yellow
+Install-Module -Name CompletionPredictor -Scope AllUsers -Force
+
+# Azure PowerShell (large install, takes a while)
+Write-Host "Installing Azure PowerShell..." -ForegroundColor Yellow
+Install-Module -Name Az -Scope AllUsers -Force
+
+# ── Done ────────────────────────────────────────────────────────────────────
+
 Write-Host ""
 Write-Host "=== System Config complete ===" -ForegroundColor Green

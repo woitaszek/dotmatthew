@@ -74,11 +74,6 @@ winget install --id XP89DCGQ3K6VLD -e --source msstore --accept-package-agreemen
 Write-Host "Installing Pandoc..." -ForegroundColor Yellow
 winget install --id JohnMacFarlane.Pandoc -e --source winget --accept-package-agreements --accept-source-agreements
 
-# ── PowerShell Modules ──────────────────────────────────────────────────────
-
-# Azure PowerShell (uncomment if needed - large install, takes a while)
-# Install-Module -Name Az -Scope CurrentUser -Force
-
 # ── Work (uncomment if needed) ──────────────────────────────────────────────
 
 # Visual Studio 2022 Enterprise (requires license)
