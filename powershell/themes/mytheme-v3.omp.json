@@ -1,11 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blank_line_before_prompt": true,
   "blocks": [
     {
       "type": "prompt",
       "alignment": "left",
       "newline": false,
       "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#666666",
+          "template": "\n{{ .CurrentDate | date \"15:04\" }} "
+        },
         {
           "type": "session",
           "style": "diamond",
@@ -20,12 +27,6 @@
           "style": "plain",
           "foreground": "#cccccc",
           "template": "{{ if .Root }} {{ end }}{{ .UserName }}@{{ .HostName }} "
-        },
-        {
-          "type": "path",
-          "style": "plain",
-          "foreground": "#81A1C1",
-          "template": "{{ base .Location }} "
         },
         {
           "type": "git",
@@ -77,20 +78,32 @@
       "newline": true,
       "segments": [
         {
-          "type": "time",
-          "style": "plain",
-          "foreground": "#4d4d4d",
-          "template": "{{ .CurrentDate | date \"15:04\" }} "
-        },
-        {
           "type": "status",
           "style": "plain",
-          "foreground": "#ffffff",
-          "foreground_templates": ["{{ if gt .Code 0 }}#ff0000{{ end }}"],
-          "template": "\u276f ",
+          "foreground": "#4CAF50",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ff5555{{ end }}"],
+          "template": "\u25cf ",
           "properties": {
             "always_enabled": true
           }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "background": "#4c566a",
+          "template": " {{ .Path }} ",
+          "properties": {
+            "style": "full",
+            "folder_separator_icon": "\\"
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "template": "\u00a0"
         }
       ]
     }
