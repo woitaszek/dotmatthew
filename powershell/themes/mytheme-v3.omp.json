@@ -1,6 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "blank_line_before_prompt": true,
   "blocks": [
     {
       "type": "prompt",
@@ -11,7 +10,7 @@
           "type": "time",
           "style": "plain",
           "foreground": "#666666",
-          "template": "\n{{ .CurrentDate | date \"15:04\" }} "
+          "template": "{{ if not (eq (env \"TERM_PROGRAM\") \"vscode\") }}\n{{ end }}{{ .CurrentDate | date \"15:04\" }} "
         },
         {
           "type": "session",
