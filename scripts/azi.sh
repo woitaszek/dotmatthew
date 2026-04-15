@@ -199,9 +199,10 @@ azi() {
 
     update_progress "Counting available subscriptions..."
 
-    # Get available subscription count for additional context
-    local sub_count
-    sub_count=$(az account list --query "length(@)" --output tsv 2>/dev/null || echo "?")
+    # Get subscriptions accessible to the current user in the active tenant
+    local sub_list sub_count
+    sub_list=$(az account list --query "[?tenantId=='${tenant_id}'].{name:name, id:id}" --output json 2>/dev/null || echo "[]")
+    sub_count=$(echo "$sub_list" | jq 'length' 2>/dev/null || echo "?")
 
     update_progress "Checking token expiration..."
 
@@ -220,7 +221,7 @@ azi() {
         echo -n -e "${ICON_TENANT} ${PURPLE}${tenant_name}${NC} ${GRAY}|${NC} "
         echo -n -e "${ICON_SUBSCRIPTION} ${CYAN}${subscription_name}${NC} "
         echo -n -e "${DARK_GRAY}${subscription_id}${NC} "
-        echo -n -e "${GRAY}(${sub_count} total)${NC} "
+        echo -n -e "${GRAY}(${sub_count} accessible)${NC} "
         echo -n -e "${GRAY}| Token:${NC} ${token_status}"
         if [[ -n "$token_expires" && "$token_expires" != "Unknown" ]]; then
             echo -e " ${DARK_GRAY}(expires: $(date -d "$token_expires" "+%H:%M" 2>/dev/null || echo "$token_expires"))${NC}"
@@ -229,13 +230,26 @@ azi() {
         fi
     else
         # Verbose mode: multi-line output with white labels
-        echo -e "${ICON_AZURE} ${BLUE} Azure Status${NC}"
+        echo -e "=== ${ICON_AZURE} ${BLUE} Azure Status${NC} ==="
+        echo
         echo -e "${ICON_USER} ${WHITE}User:${NC}               ${GREEN}${user_name}${NC}"
         echo -e "${ICON_USER} ${WHITE}User Principal:${NC}     ${DARK_GRAY}${user_principal_name}${NC}"
+        echo
         echo -e "${ICON_TENANT} ${WHITE}Tenant:${NC}             ${PURPLE}${tenant_name}${NC}"
+        echo -e "${ICON_ID} ${WHITE}Tenant ID:${NC}          ${DARK_GRAY}${tenant_id}${NC}"
+        echo
         echo -e "${ICON_SUBSCRIPTION} ${WHITE}Subscription Name:${NC}  ${CYAN}${subscription_name}${NC}"
         echo -e "${ICON_ID} ${WHITE}Subscription ID:${NC}    ${DARK_GRAY}${subscription_id}${NC}"
-        echo -e "${ICON_COUNT} ${WHITE}Total Subs:${NC}         ${GRAY}${sub_count}${NC}"
+        echo -e "${ICON_COUNT} ${WHITE}Accessible Subs:${NC}    ${GRAY}${sub_count}${NC}"
+        # List each accessible subscription, marking the active one
+        while IFS= read -r sub_name && IFS= read -r sub_id; do
+            if [[ "$sub_id" == "$subscription_id" ]]; then
+                echo -e "   ${YELLOW}★${NC} ${GRAY}${sub_id}${NC} ${CYAN}${sub_name}${NC}"
+            else
+                echo -e "   ${GRAY}•${NC} ${DARK_GRAY}${sub_id}${NC} ${GRAY}${sub_name}${NC}"
+            fi
+        done < <(echo "$sub_list" | jq -r '.[] | .name, .id' 2>/dev/null)
+        echo
         echo -n -e "${ICON_CHECK} ${WHITE}Token Status:${NC}       ${token_status}"
         if [[ -n "$token_expires" && "$token_expires" != "Unknown" ]]; then
             echo -e " ${DARK_GRAY}(expires: $(date -d "$token_expires" "+%Y-%m-%d %H:%M" 2>/dev/null || echo "$token_expires"))${NC}"
