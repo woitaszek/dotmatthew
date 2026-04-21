@@ -1,0 +1,38 @@
+# .gitconfig for WSL
+#
+# |  | /__` |
+# |/\| .__/ |___
+#
+
+# ── Identity ────────────────────────────────────────────────────────────────
+
+[user]
+  name = {{GIT_NAME}}
+  email = {{EMAIL_WORK}}
+  signingkey = {{SIGNING_KEY}}
+
+{{PERSONAL_BLOCK}}
+
+# ── General ─────────────────────────────────────────────────────────────────
+
+[init]
+  defaultBranch = main
+
+[fetch]
+  prune = true
+
+# ── Commit signing (1Password SSH agent) ────────────────────────────────────
+# https://developer.1password.com/docs/ssh/integrations/wsl/
+
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  program = "/mnt/c/Users/{{WINDOWS_USER}}/AppData/Local/Microsoft/WindowsApps/op-ssh-sign-wsl.exe"
+  allowedSignersFile = ~/.ssh/allowed_signers
+[commit]
+  gpgsign = true
+
+# ── Credentials ─────────────────────────────────────────────────────────────
+
+[credential]
+  helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe

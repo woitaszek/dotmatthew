@@ -12,7 +12,8 @@ accumulated over the years.
 ├── zshrc/           # Zsh configuration
 ├── Library/         # macOS KeyBindings
 ├── scripts/         # Bash/Python utility scripts
-└── powershell/      # PowerShell profile, scripts, and Oh My Posh theme
+├── powershell/      # PowerShell profile, scripts, and Oh My Posh theme
+└── ssh-git/         # SSH keys, Git identity, and commit signing (Windows + WSL)
 ```
 
 ## Bash/Unix
@@ -34,3 +35,9 @@ See [zshrc/README.md](zshrc/README.md) for installation.
 
 Remaps Home/End keys for line and document navigation on macOS.
 See [Library/README.md](Library/README.md) for installation.
+
+## SSH and Git Signing
+
+Cross-platform Git identity, SSH key management, and 1Password commit
+signing for Windows and WSL.
+See [ssh-git/README.md](ssh-git/README.md) for the architecture and installers.

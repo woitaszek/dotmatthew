@@ -1,0 +1,8 @@
+# .gitconfig-personal
+#
+# Personal identity override for repos under PERSONAL_REPOS_DIR.
+# Included via [includeIf] in the platform-specific .gitconfig.
+
+[user]
+  name = {{GIT_NAME}}
+  email = {{EMAIL_PERSONAL}}

@@ -1,0 +1,36 @@
+# .gitconfig for WINDOWS
+#
+# |  | | |\ | |  \ /  \ |  | /__`
+# |/\| | | \| |__/ \__/ |/\| .__/
+#
+
+# ── Identity ────────────────────────────────────────────────────────────────
+
+[user]
+  name = {{GIT_NAME}}
+  email = {{EMAIL_WORK}}
+  signingkey = {{SIGNING_KEY}}
+
+{{PERSONAL_BLOCK}}
+
+# ── General ─────────────────────────────────────────────────────────────────
+
+[core]
+  sshCommand = 'C:\\Windows\\System32\\OpenSSH\\ssh.exe'
+
+[init]
+  defaultBranch = main
+
+[fetch]
+  prune = true
+
+# ── Commit signing (1Password SSH agent) ────────────────────────────────────
+# https://developer.1password.com/docs/ssh/get-started/
+
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  program = "C:/Users/{{WINDOWS_USER}}/AppData/Local/Microsoft/WindowsApps/op-ssh-sign.exe"
+  allowedSignersFile = ~/.ssh/allowed_signers
+[commit]
+  gpgsign = true

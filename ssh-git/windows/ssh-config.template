@@ -1,0 +1,4 @@
+# Windows SSH config
+#
+# Host-specific entries go here. The SSH agent is provided by 1Password.
+# Windows OpenSSH agent service should be DISABLED (1Password replaces it).
