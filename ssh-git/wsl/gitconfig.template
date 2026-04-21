@@ -23,11 +23,14 @@
 
 # ── Commit signing (1Password SSH agent) ────────────────────────────────────
 # https://developer.1password.com/docs/ssh/integrations/wsl/
+#
+# Uses a wrapper script that routes signing to 1Password (op-ssh-sign-wsl.exe)
+# and verification to native ssh-keygen (avoids WSL path garbling).
 
 [gpg]
   format = ssh
 [gpg "ssh"]
-  program = "/mnt/c/Users/{{WINDOWS_USER}}/AppData/Local/Microsoft/WindowsApps/op-ssh-sign-wsl.exe"
+  program = ~/.ssh/git-ssh-sign.sh
   allowedSignersFile = ~/.ssh/allowed_signers
 [commit]
   gpgsign = true

@@ -298,6 +298,11 @@ main() {
   fi
   diff_and_install "${signers_rendered}" "${HOME}/.ssh/allowed_signers" ".ssh/allowed_signers"
 
+  # git-ssh-sign.sh (signing/verification wrapper)
+  rendered="$(render_template "${SCRIPT_DIR}/wsl/git-ssh-sign.sh")"
+  diff_and_install "${rendered}" "${HOME}/.ssh/git-ssh-sign.sh" ".ssh/git-ssh-sign.sh (signing wrapper)"
+  chmod +x "${HOME}/.ssh/git-ssh-sign.sh" 2>/dev/null || true
+
   # ── SSH key symlinks ──
 
   printf '\n%s── SSH Key Symlinks ──%s\n' "${BOLD}" "${RESET}"
