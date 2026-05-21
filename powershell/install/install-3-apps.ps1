@@ -38,6 +38,10 @@ winget install --id Microsoft.VisualStudioCode.Insiders -e --source winget --acc
 Write-Host "Installing Python 3.13..." -ForegroundColor Yellow
 winget install --id Python.Python.3.13 -e --source winget --accept-package-agreements --accept-source-agreements
 
+# uv (Python package/project manager)
+Write-Host "Installing uv..." -ForegroundColor Yellow
+winget install --id astral-sh.uv -e --source winget --accept-package-agreements --accept-source-agreements
+
 # PowerShell Preview
 # Write-Host "Installing PowerShell Preview..." -ForegroundColor Yellow
 # winget install --id Microsoft.PowerShell.Preview -e --source winget --accept-package-agreements --accept-source-agreements
