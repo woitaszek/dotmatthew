@@ -24,6 +24,7 @@ unsetopt SHARE_HISTORY          # (turned off) read history whenever used
 setopt HIST_VERIFY              # require editing/verifying after !!
 setopt HIST_FIND_NO_DUPS        # ignore duplicates in history search
 setopt HIST_IGNORE_DUPS         # don't save consecutive duplicates
+setopt HIST_IGNORE_SPACE        # don't save commands starting with a space
 hgrep () { fc -Dlim "*$@*" 1 }
 # ... consider using fzf instead
 
