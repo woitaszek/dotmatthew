@@ -73,6 +73,36 @@
     },
     {
       "type": "prompt",
+      "alignment": "right",
+      "newline": false,
+      "overflow": "hide",
+      "segments": [
+        {
+          "type": "az",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "foreground": "#e8ecf0",
+          "background": "#1a3a5c",
+          "template": "\uf0c2 {{ .Name }} ",
+          "options": {
+            "source": "pwsh"
+          }
+        },
+        {
+          "type": "az",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "foreground": "#b0c4de",
+          "background": "#1a3a5c",
+          "template": " {{ .User.Name | replace \".onmicrosoft.com\" \"\" }} ",
+          "options": {
+            "source": "pwsh"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
