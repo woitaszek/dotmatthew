@@ -29,10 +29,15 @@
 
 [gpg]
   format = ssh
+
 [gpg "ssh"]
   program = ~/.ssh/git-ssh-sign.sh
   allowedSignersFile = ~/.ssh/allowed_signers
+
 [commit]
+  gpgsign = true
+
+[tag]
   gpgsign = true
 
 # ── Credentials ─────────────────────────────────────────────────────────────
