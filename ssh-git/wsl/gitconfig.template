@@ -31,7 +31,7 @@
   format = ssh
 
 [gpg "ssh"]
-  program = ~/.ssh/git-ssh-sign.sh
+  program = {{HOME}}/.ssh/git-ssh-sign.sh
   allowedSignersFile = ~/.ssh/allowed_signers
 
 [commit]
@@ -44,3 +44,6 @@
 
 [credential]
   helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
+
+[credential "https://dev.azure.com"]
+  useHttpPath = true

@@ -47,9 +47,9 @@ for Windows and WSL using 1Password as the SSH agent.
 4. Git Credential Manager on Windows handles HTTPS authentication
    for both Windows Git and WSL Git.
 
-5. SSH keys are stored on the Windows side (`C:\Users\<user>\.ssh\`).
-   WSL symlinks `~/.ssh/id_ed25519*` to the Windows copies so both
-   environments reference the same key files.
+5. SSH keys are managed by 1Password's agent. On machines with
+   file-based keys in `C:\Users\<user>\.ssh\`, the installer
+   auto-detects key pairs and offers to symlink them into WSL.
 
 ### Personal identity
 

@@ -77,6 +77,7 @@ render_template() {
   output="${output//\{\{EMAIL_WORK\}\}/${EMAIL_WORK}}"
   output="${output//\{\{SIGNING_KEY\}\}/${SIGNING_KEY}}"
   output="${output//\{\{WINDOWS_USER\}\}/${WINDOWS_USER}}"
+  output="${output//\{\{HOME\}\}/${HOME}}"
 
   if [[ -n "${EMAIL_PERSONAL:-}" ]]; then
     output="${output//\{\{EMAIL_PERSONAL\}\}/${EMAIL_PERSONAL}}"
@@ -304,39 +305,46 @@ main() {
 
   # ── SSH key symlinks ──
 
-  printf '\n%s── SSH Key Symlinks ──%s\n' "${BOLD}" "${RESET}"
   local win_ssh="/mnt/c/Users/${WINDOWS_USER}/.ssh"
 
   if [[ -d "${win_ssh}" ]]; then
-    for key_file in id_ed25519 id_ed25519.pub; do
-      local win_key="${win_ssh}/${key_file}"
-      local wsl_key="${HOME}/.ssh/${key_file}"
-
-      if [[ ! -f "${win_key}" ]]; then
-        warn "  ${win_key} not found; skipping ${key_file} symlink."
-        continue
-      fi
-
-      if [[ -L "${wsl_key}" ]] && [[ "$(readlink "${wsl_key}")" == "${win_key}" ]]; then
-        success "  ~/.ssh/${key_file} already symlinked."
-      elif [[ -f "${wsl_key}" ]]; then
-        warn "  ~/.ssh/${key_file} exists (not a symlink)."
-        if prompt_yn "  Replace with symlink to ${win_key}?"; then
-          rm -f "${wsl_key}"
-          ln -s "${win_key}" "${wsl_key}"
-          success "  Symlinked."
-        fi
-      else
-        info "  Creating symlink: ~/.ssh/${key_file} -> ${win_key}"
-        if prompt_yn "  Create?"; then
-          ln -s "${win_key}" "${wsl_key}"
-          success "  Symlinked."
-        fi
-      fi
+    # Find private keys: files without extensions that have a matching .pub
+    local key_files=()
+    for pub in "${win_ssh}"/*.pub; do
+      [[ -f "${pub}" ]] || continue
+      local priv="${pub%.pub}"
+      [[ -f "${priv}" ]] || continue
+      key_files+=("$(basename "${priv}")")
     done
-  else
-    warn "  Windows .ssh directory not found at ${win_ssh}"
-    warn "  Generate a key on Windows first, then re-run."
+
+    if [[ ${#key_files[@]} -gt 0 ]]; then
+      printf '\n%s── SSH Key Symlinks ──%s\n' "${BOLD}" "${RESET}"
+      info "  Found ${#key_files[@]} key pair(s) in ${win_ssh}"
+
+      for key_name in "${key_files[@]}"; do
+        for suffix in "" ".pub"; do
+          local key_file="${key_name}${suffix}"
+          local win_key="${win_ssh}/${key_file}"
+          local wsl_key="${HOME}/.ssh/${key_file}"
+
+          if [[ -L "${wsl_key}" ]] && [[ "$(readlink "${wsl_key}")" == "${win_key}" ]]; then
+            success "  ~/.ssh/${key_file} already symlinked."
+          elif [[ -f "${wsl_key}" ]]; then
+            warn "  ~/.ssh/${key_file} exists (not a symlink)."
+            if prompt_yn "  Replace with symlink to ${win_key}?"; then
+              rm -f "${wsl_key}"
+              ln -s "${win_key}" "${wsl_key}"
+              success "  Symlinked."
+            fi
+          else
+            if prompt_yn "  Symlink ~/.ssh/${key_file} -> ${win_key}?"; then
+              ln -s "${win_key}" "${wsl_key}"
+              success "  Symlinked."
+            fi
+          fi
+        done
+      done
+    fi
   fi
 
   # ── Verification ──
