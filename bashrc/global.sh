@@ -16,7 +16,7 @@ if [[ -n "${BASH_SOURCE[0]}" ]]
 then
     THISDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 else
-    eval THISDIR="~/.matthew/bashrc" # expand path
+    THISDIR="$HOME/.matthew/bashrc"
     if [ ! -e "$THISDIR" ]
     then
         echo >&2 "$0: Could not identify directory containing Matthew's bashrc profile ($THISDIR)"
