@@ -47,7 +47,7 @@ prompt_var() {
     return 1
   fi
 
-  eval "${var_name}=\"${input}\""
+  printf -v "${var_name}" '%s' "${input}"
   return 0
 }
 
