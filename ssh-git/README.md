@@ -67,7 +67,6 @@ ssh-git/
 ├── install-wsl.sh                   # Interactive installer for WSL
 ├── install-windows.ps1              # Interactive installer for Windows
 ├── common/
-│   ├── allowed_signers.template     # SSH allowed signers (both platforms)
 │   └── gitconfig-personal.template  # Personal identity override
 ├── windows/
 │   ├── gitconfig.template           # Windows .gitconfig

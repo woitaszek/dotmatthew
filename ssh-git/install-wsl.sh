@@ -290,13 +290,12 @@ main() {
   fi
 
   # allowed_signers
-  rendered="$(render_template "${SCRIPT_DIR}/common/allowed_signers.template")"
-  local signers_rendered="${rendered}"
-  # If no personal email, strip the comma-separated format
-  if [[ -z "${EMAIL_PERSONAL}" ]]; then
-    signers_rendered="${EMAIL_WORK} ${SIGNING_KEY}"
+  if [[ -n "${EMAIL_PERSONAL}" ]]; then
+    rendered="${EMAIL_WORK},${EMAIL_PERSONAL} ${SIGNING_KEY}"
+  else
+    rendered="${EMAIL_WORK} ${SIGNING_KEY}"
   fi
-  diff_and_install "${signers_rendered}" "${HOME}/.ssh/allowed_signers" ".ssh/allowed_signers"
+  diff_and_install "${rendered}" "${HOME}/.ssh/allowed_signers" ".ssh/allowed_signers"
 
   # git-ssh-sign.sh (signing/verification wrapper)
   rendered="$(render_template "${SCRIPT_DIR}/wsl/git-ssh-sign.sh")"
