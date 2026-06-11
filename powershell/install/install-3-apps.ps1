@@ -58,6 +58,14 @@ winget install --id Microsoft.Azd -e --source winget --accept-package-agreements
 Write-Host "Installing GitHub Copilot CLI..." -ForegroundColor Yellow
 winget install --id GitHub.Copilot -e --source winget --accept-package-agreements --accept-source-agreements
 
+# Coreutils for Windows (UNIX-style utilities: cat, grep, find, xargs, etc.)
+Write-Host "Installing Coreutils for Windows..." -ForegroundColor Yellow
+winget install --id Microsoft.Coreutils -e --source winget --accept-package-agreements --accept-source-agreements
+
+# Microsoft ODBC Driver 18 for SQL Server
+Write-Host "Installing Microsoft ODBC Driver 18..." -ForegroundColor Yellow
+winget install --id Microsoft.msodbcsql.18 -e --source winget --accept-package-agreements --accept-source-agreements
+
 # ── Security ────────────────────────────────────────────────────────────────
 
 # 1Password (Microsoft Store: AgileBits.1Password)
