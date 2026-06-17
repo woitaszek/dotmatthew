@@ -43,7 +43,7 @@
 # ── Credentials ─────────────────────────────────────────────────────────────
 
 [credential]
-  helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
+  helper = /mnt/c/Program\\ Files/Git/clangarm64/bin/git-credential-manager.exe
 
 [credential "https://dev.azure.com"]
   useHttpPath = true
