@@ -303,6 +303,11 @@ main() {
   diff_and_install "${rendered}" "${HOME}/.ssh/git-ssh-sign.sh" ".ssh/git-ssh-sign.sh (signing wrapper)"
   chmod +x "${HOME}/.ssh/git-ssh-sign.sh" 2>/dev/null || true
 
+  # git-credential-manager-wrapper.sh (resilient GCM locator)
+  rendered="$(render_template "${SCRIPT_DIR}/wsl/git-credential-manager-wrapper.sh")"
+  diff_and_install "${rendered}" "${HOME}/.ssh/git-credential-manager-wrapper.sh" ".ssh/git-credential-manager-wrapper.sh (GCM wrapper)"
+  chmod +x "${HOME}/.ssh/git-credential-manager-wrapper.sh" 2>/dev/null || true
+
   # ── SSH key symlinks ──
 
   local win_ssh="/mnt/c/Users/${WINDOWS_USER}/.ssh"
