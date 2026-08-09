@@ -83,11 +83,10 @@ render_template() {
     output="${output//\{\{EMAIL_PERSONAL\}\}/${EMAIL_PERSONAL}}"
   fi
 
-  if [[ -n "${PERSONAL_BLOCK:-}" ]]; then
-    output="${output//\{\{PERSONAL_BLOCK\}\}/${PERSONAL_BLOCK}}"
-  else
-    output="${output//\{\{PERSONAL_BLOCK\}\}/}"
-  fi
+  output="${output//\{\{PERSONAL_BLOCK\}\}/${PERSONAL_BLOCK:-}}"
+
+  # Collapse the gap left by an empty PERSONAL_BLOCK to a single blank line.
+  output="$(printf '%s\n' "${output}" | cat -s)"
 
   printf '%s\n' "${output}"
 }
@@ -107,6 +106,10 @@ diff_and_install() {
     warn "  Directory ${target_dir} does not exist."
     if prompt_yn "  Create it?"; then
       mkdir -p "${target_dir}"
+      # ~/.ssh must be owner-only; harmless for other config dirs.
+      if [[ "$(basename "${target_dir}")" == ".ssh" ]]; then
+        chmod 0700 "${target_dir}"
+      fi
       success "  Created ${target_dir}"
     else
       warn "  Skipping ${description}."
@@ -297,6 +300,9 @@ main() {
     rendered="${EMAIL_WORK} ${SIGNING_KEY}"
   fi
   diff_and_install "${rendered}" "${HOME}/.ssh/allowed_signers" ".ssh/allowed_signers"
+  if [[ -f "${HOME}/.ssh/allowed_signers" ]]; then
+    chmod 0600 "${HOME}/.ssh/allowed_signers"
+  fi
 
   # git-ssh-sign.sh (signing/verification wrapper)
   rendered="$(render_template "${SCRIPT_DIR}/wsl/git-ssh-sign.sh")"
