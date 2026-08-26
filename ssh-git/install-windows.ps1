@@ -133,6 +133,36 @@ function Invoke-DiffAndInstall {
     Write-Success "  Installed."
 }
 
+function Invoke-SafeGitConfigInstall {
+    param(
+        [string]$Rendered,
+        [string]$TargetPath,
+        [string]$Description
+    )
+
+    if (Test-Path $TargetPath) {
+        $existing = Get-Content $TargetPath -Raw -ErrorAction SilentlyContinue
+        if ($existing -ne $Rendered) {
+            $candidatePath = "$TargetPath.dotmatthew-candidate"
+            Set-Content -Path $candidatePath -Value $Rendered -NoNewline
+
+            Write-Host ""
+            Write-Host "── $Description ──" -ForegroundColor White
+            Write-Warn "  Existing config differs; refusing to overwrite it."
+            Write-Host "  Current:   $TargetPath"
+            Write-Host "  Candidate: $candidatePath"
+            Write-Warn "  Move machine-specific settings to ~/.gitconfig.local, merge the candidate manually, or ask an AI assistant for help."
+            return $false
+        }
+    }
+
+    Invoke-DiffAndInstall $Rendered $TargetPath $Description
+    if (-not (Test-Path $TargetPath)) { return $false }
+
+    $installed = Get-Content $TargetPath -Raw -ErrorAction SilentlyContinue
+    return $installed -eq $Rendered
+}
+
 # ── Auto-detection ──────────────────────────────────────────────────────────
 
 function Get-DetectedGitName {
@@ -157,14 +187,93 @@ function Get-DetectedSigningKey {
     try { git config --global user.signingkey 2>$null } catch { '' }
 }
 
-function Get-DetectedPersonalReposDir {
-    $gitconfig = Join-Path $HOME ".gitconfig"
-    if (Test-Path $gitconfig) {
-        $match = Select-String -Path $gitconfig -Pattern 'gitdir:([^"]+)/\*\*' |
+function Get-DetectedProfileSetting {
+    param(
+        [string]$ConfigPath,
+        [string]$Setting
+    )
+
+    if (Test-Path $ConfigPath) {
+        $match = Select-String -Path $ConfigPath -Pattern "^\s*$Setting\s*=\s*(.+)$" |
             Select-Object -First 1
         if ($match) { return $match.Matches.Groups[1].Value.Trim() }
     }
+
     return ''
+}
+
+function Get-DetectedAlternateSigningKey {
+    param([string]$DefaultSigningKey)
+
+    try {
+        foreach ($agentKey in ssh-add -L 2>$null) {
+            $candidateKey = ConvertTo-PublicKey $agentKey
+            if ($candidateKey -ne $DefaultSigningKey) { return $candidateKey }
+        }
+    } catch { }
+
+    return ''
+}
+
+function Get-DetectedReposDir {
+    param(
+        [string]$IncludedConfigPath,
+        [string]$GitConfigPath = (Join-Path $HOME ".gitconfig")
+    )
+
+    if (Test-Path $GitConfigPath) {
+        $candidate = ''
+        foreach ($line in Get-Content $GitConfigPath) {
+            if ($line -match '^\s*\[includeIf\s+"gitdir(?:/i)?:([^"]+)"\]\s*$') {
+                $candidate = $Matches[1] -replace '/\*\*$', ''
+                continue
+            }
+
+            if ($candidate -and $line -match ('^\s*path\s*=\s*' + [regex]::Escape($IncludedConfigPath) + '\s*$')) {
+                return $candidate
+            }
+
+            if ($line -match '^\s*\[') { $candidate = '' }
+        }
+    }
+    return ''
+}
+
+function Get-DetectedAdditionalProfileName {
+    param([string]$GitConfigPath = (Join-Path $HOME ".gitconfig"))
+
+    if (Test-Path $GitConfigPath) {
+        foreach ($line in Get-Content $GitConfigPath) {
+            if ($line -match '^\s*path\s*=\s*~/\.gitconfig-([A-Za-z0-9][A-Za-z0-9_-]*)\s*$' -and
+                $Matches[1] -ne 'personal') {
+                return $Matches[1]
+            }
+        }
+    }
+
+    return ''
+}
+
+function Test-ProfileName {
+    param([string]$ProfileName)
+
+    return $ProfileName -ine 'personal' -and
+        $ProfileName -match '^[A-Za-z0-9][A-Za-z0-9_-]*$'
+}
+
+function ConvertTo-PublicKey {
+    param([string]$SigningKey)
+
+    $parts = (($SigningKey -replace '^key::', '').Trim() -split '\s+')
+    if ($parts.Count -lt 2 -or $parts[0] -notmatch '^ssh-') {
+        throw "Signing key must be an SSH public key, not a fingerprint or private key path."
+    }
+
+    return "$($parts[0]) $($parts[1])"
+}
+
+if ($MyInvocation.InvocationName -eq '.') {
+    return
 }
 
 # ── Main ────────────────────────────────────────────────────────────────────
@@ -204,9 +313,13 @@ $personalDefault = if (Test-Path (Join-Path $HOME ".gitconfig-personal")) { 'y' 
 if (Read-YesNo "  Configure a personal Git identity?" $personalDefault) {
     $EmailPersonal = Read-Var "  Personal email" (Get-DetectedEmailPersonal)
     if (-not [string]::IsNullOrWhiteSpace($EmailPersonal)) {
-        $PersonalReposDir = Read-Var "  Personal repos directory" (Get-DetectedPersonalReposDir)
+        $detectedPersonalReposDir = Get-DetectedReposDir '~/.gitconfig-personal'
+        if ([string]::IsNullOrWhiteSpace($detectedPersonalReposDir)) {
+            $detectedPersonalReposDir = '**/wingit-personal'
+        }
+        $PersonalReposDir = Read-Var "  Personal repos path pattern" $detectedPersonalReposDir
         if (-not [string]::IsNullOrWhiteSpace($PersonalReposDir)) {
-            $PersonalBlock = "[includeIf `"gitdir:$PersonalReposDir/**`"]`n  path = ~/.gitconfig-personal"
+            $PersonalBlock = "[includeIf `"gitdir/i:$PersonalReposDir/**`"]`n  path = ~/.gitconfig-personal"
         } else {
             Write-Warn "  No repos directory; skipping includeIf."
         }
@@ -228,6 +341,69 @@ $SigningKey = Read-Var "  SSH signing key (public key)" $detectedKey
 if ([string]::IsNullOrWhiteSpace($SigningKey)) {
     Write-Err "Signing key is required."; exit 1
 }
+$SigningKey = ConvertTo-PublicKey $SigningKey
+
+# ── Step 4: Additional directory-scoped profile ──
+
+Write-Host ""
+Write-Info "Step 4: Additional Git profile (optional)"
+Write-Host ""
+
+$ProfileName = ''
+$ProfileEmail = ''
+$ProfileReposDir = ''
+$ProfileSigningKey = ''
+$ProfileBlock = ''
+$ProfileConfigName = ''
+$ProfileConfigPath = ''
+
+$defaultProfileName = Get-DetectedAdditionalProfileName
+if ([string]::IsNullOrWhiteSpace($defaultProfileName)) { $defaultProfileName = 'profile' }
+$defaultProfileConfigPath = Join-Path $HOME ".gitconfig-$defaultProfileName"
+$detectedProfileKey = Get-DetectedProfileSetting $defaultProfileConfigPath 'signingkey'
+if ([string]::IsNullOrWhiteSpace($detectedProfileKey)) {
+    $detectedProfileKey = Get-DetectedAlternateSigningKey $SigningKey
+}
+$profileDefault = if ((Test-Path $defaultProfileConfigPath) -or $detectedProfileKey) { 'y' } else { 'n' }
+
+if (Read-YesNo "  Configure another directory-scoped identity and signing key?" $profileDefault) {
+    $ProfileName = Read-Var "  Profile name" $defaultProfileName
+    if ($ProfileName -ieq 'personal') {
+        Write-Err "The profile name 'personal' is reserved."; exit 1
+    }
+    if (-not (Test-ProfileName $ProfileName)) {
+        Write-Err "Profile name may contain only letters, numbers, underscores, and hyphens."; exit 1
+    }
+
+    $ProfileConfigName = ".gitconfig-$ProfileName"
+    $ProfileConfigPath = Join-Path $HOME $ProfileConfigName
+    $ProfileIncludePath = "~/$ProfileConfigName"
+
+    $detectedProfileEmail = Get-DetectedProfileSetting $ProfileConfigPath 'email'
+    if ([string]::IsNullOrWhiteSpace($detectedProfileEmail)) { $detectedProfileEmail = $EmailWork }
+    $ProfileEmail = Read-Var "  Profile email" $detectedProfileEmail
+
+    $detectedProfileReposDir = Get-DetectedReposDir $ProfileIncludePath
+    if ([string]::IsNullOrWhiteSpace($detectedProfileReposDir)) {
+        $detectedProfileReposDir = "**/wingit-$ProfileName"
+    }
+    $ProfileReposDir = Read-Var "  Profile repos path pattern" $detectedProfileReposDir
+
+    $detectedProfileKey = Get-DetectedProfileSetting $ProfileConfigPath 'signingkey'
+    if ([string]::IsNullOrWhiteSpace($detectedProfileKey)) {
+        $detectedProfileKey = Get-DetectedAlternateSigningKey $SigningKey
+    }
+    $ProfileSigningKey = Read-Var "  Profile SSH signing key (public key)" $detectedProfileKey
+
+    if ([string]::IsNullOrWhiteSpace($ProfileEmail) -or
+        [string]::IsNullOrWhiteSpace($ProfileReposDir) -or
+        [string]::IsNullOrWhiteSpace($ProfileSigningKey)) {
+        Write-Err "Profile email, repos directory, and signing key are required."; exit 1
+    }
+
+    $ProfileSigningKey = ConvertTo-PublicKey $ProfileSigningKey
+    $ProfileBlock = "[includeIf `"gitdir/i:$ProfileReposDir/**`"]`n  path = $ProfileIncludePath"
+}
 
 $WindowsUser = $env:USERNAME
 
@@ -241,7 +417,13 @@ if (-not [string]::IsNullOrWhiteSpace($EmailPersonal)) {
     Write-Host "  Personal email:   $EmailPersonal"
     Write-Host "  Personal repos:   $PersonalReposDir"
 }
-Write-Host "  Signing key:      $SigningKey"
+Write-Host "  Public key:       $SigningKey"
+if (-not [string]::IsNullOrWhiteSpace($ProfileEmail)) {
+    Write-Host "  Profile:          $ProfileName"
+    Write-Host "  Profile email:    $ProfileEmail"
+    Write-Host "  Profile repos:    $ProfileReposDir"
+    Write-Host "  Profile key:      $ProfileSigningKey"
+}
 Write-Host "  Windows user:     $WindowsUser"
 Write-Host ""
 
@@ -256,14 +438,20 @@ $vars = @{
     GIT_NAME       = $GitName
     EMAIL_WORK     = $EmailWork
     EMAIL_PERSONAL = $EmailPersonal
+    PROFILE_EMAIL  = $ProfileEmail
     SIGNING_KEY    = $SigningKey
+    PROFILE_SIGNING_KEY = $ProfileSigningKey
     WINDOWS_USER   = $WindowsUser
     PERSONAL_BLOCK = $PersonalBlock
+    PROFILE_BLOCK  = $ProfileBlock
 }
 
 # .gitconfig
 $rendered = Invoke-RenderTemplate (Join-Path $ScriptDir "windows" "gitconfig.template") $vars
-Invoke-DiffAndInstall $rendered (Join-Path $HOME ".gitconfig") ".gitconfig (Windows)"
+$gitconfigInstalled = Invoke-SafeGitConfigInstall $rendered (Join-Path $HOME ".gitconfig") ".gitconfig (Windows)"
+if (-not $gitconfigInstalled) {
+    exit 2
+}
 
 # .gitconfig-personal
 if (-not [string]::IsNullOrWhiteSpace($EmailPersonal)) {
@@ -271,12 +459,21 @@ if (-not [string]::IsNullOrWhiteSpace($EmailPersonal)) {
     Invoke-DiffAndInstall $rendered (Join-Path $HOME ".gitconfig-personal") ".gitconfig-personal"
 }
 
-# allowed_signers
-if (-not [string]::IsNullOrWhiteSpace($EmailPersonal)) {
-    $signersContent = "$EmailWork,$EmailPersonal $SigningKey`n"
-} else {
-    $signersContent = "$EmailWork $SigningKey`n"
+# Additional directory-scoped profile
+if (-not [string]::IsNullOrWhiteSpace($ProfileEmail)) {
+    $rendered = Invoke-RenderTemplate (Join-Path $ScriptDir "common" "gitconfig-profile.template") $vars
+    Invoke-DiffAndInstall $rendered $ProfileConfigPath $ProfileConfigName
 }
+
+# allowed_signers
+$publicPrincipals = @($EmailWork, $EmailPersonal) |
+    Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+    Select-Object -Unique
+$signerLines = @("$($publicPrincipals -join ',') $SigningKey")
+if (-not [string]::IsNullOrWhiteSpace($ProfileEmail)) {
+    $signerLines += "$ProfileEmail $ProfileSigningKey"
+}
+$signersContent = ($signerLines -join "`n") + "`n"
 Invoke-DiffAndInstall $signersContent (Join-Path $HOME ".ssh" "allowed_signers") ".ssh/allowed_signers"
 
 # ssh config (show template as reference, don't overwrite host entries)

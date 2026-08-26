@@ -9,9 +9,10 @@
 [user]
   name = {{GIT_NAME}}
   email = {{EMAIL_WORK}}
-  signingkey = {{SIGNING_KEY}}
+  signingkey = key::{{SIGNING_KEY}}
 
 {{PERSONAL_BLOCK}}
+{{PROFILE_BLOCK}}
 
 # ── General ─────────────────────────────────────────────────────────────────
 
@@ -39,3 +40,10 @@
 
 [tag]
   gpgsign = true
+
+# ── Machine-local settings ──────────────────────────────────────────────────
+
+# Put machine-local settings in ~/.gitconfig.local
+
+[include]
+  path = ~/.gitconfig.local
