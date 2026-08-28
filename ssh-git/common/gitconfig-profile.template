@@ -1,0 +1,9 @@
+# Directory-scoped Git profile
+#
+# Overrides identity and signing key for repositories under the profile root.
+# Included via [includeIf] in the platform-specific .gitconfig.
+
+[user]
+  name = {{GIT_NAME}}
+  email = {{PROFILE_EMAIL}}
+  signingkey = key::{{PROFILE_SIGNING_KEY}}

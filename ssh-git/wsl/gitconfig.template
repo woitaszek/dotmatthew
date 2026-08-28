@@ -41,9 +41,12 @@
   gpgsign = true
 
 # ── Credentials ─────────────────────────────────────────────────────────────
+# Uses a wrapper script that probes known Git-for-Windows install
+# locations, since Windows/Git updates can move git-credential-manager.exe
+# between architecture-specific folders (mingw64 vs clangarm64).
 
 [credential]
-  helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
+  helper = {{HOME}}/.ssh/git-credential-manager-wrapper.sh
 
 [credential "https://dev.azure.com"]
   useHttpPath = true
