@@ -14,9 +14,9 @@
 # guess the usual installation location.
 if [[ -n "${BASH_SOURCE[0]}" ]]
 then
-    THISDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    THISDIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 else
-    THISDIR="$HOME/.matthew/bashrc"
+    THISDIR=~/.matthew/bashrc
     if [ ! -e "$THISDIR" ]
     then
         echo >&2 "$0: Could not identify directory containing Matthew's bashrc profile ($THISDIR)"
