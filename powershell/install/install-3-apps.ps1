@@ -38,6 +38,20 @@ winget install --id Microsoft.VisualStudioCode.Insiders -e --source winget --acc
 Write-Host "Installing Python 3.13..." -ForegroundColor Yellow
 winget install --id Python.Python.3.13 -e --source winget --accept-package-agreements --accept-source-agreements
 
+# Microsoft OpenJDK 17 (native host architecture)
+$WindowsArchitecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+$JdkArchitecture = switch ($WindowsArchitecture) {
+	"Arm64" { "arm64" }
+	"X64" { "x64" }
+	default { throw "Unsupported Windows architecture: $WindowsArchitecture" }
+}
+#Write-Host "Installing Microsoft OpenJDK 17 ($JdkArchitecture)..." -ForegroundColor Yellow
+#winget install --id Microsoft.OpenJDK.17 -e --source winget --architecture $JdkArchitecture --accept-package-agreements --accept-source-agreements
+
+# Microsoft OpenJDK 21 (native host architecture)
+Write-Host "Installing Microsoft OpenJDK 21 ($JdkArchitecture)..." -ForegroundColor Yellow
+winget install --id Microsoft.OpenJDK.21 -e --source winget --architecture $JdkArchitecture --accept-package-agreements --accept-source-agreements
+
 # uv (Python package/project manager)
 Write-Host "Installing uv..." -ForegroundColor Yellow
 winget install --id astral-sh.uv -e --source winget --accept-package-agreements --accept-source-agreements
@@ -61,6 +75,10 @@ winget install --id GitHub.Copilot -e --source winget --accept-package-agreement
 # Coreutils for Windows (UNIX-style utilities: cat, grep, find, xargs, etc.)
 Write-Host "Installing Coreutils for Windows..." -ForegroundColor Yellow
 winget install --id Microsoft.Coreutils -e --source winget --accept-package-agreements --accept-source-agreements
+
+# ripgrep
+Write-Host "Installing ripgrep..." -ForegroundColor Yellow
+winget install --id BurntSushi.ripgrep.MSVC -e --source winget --accept-package-agreements --accept-source-agreements
 
 # Microsoft ODBC Driver 18 for SQL Server
 Write-Host "Installing Microsoft ODBC Driver 18..." -ForegroundColor Yellow
